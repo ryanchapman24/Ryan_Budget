@@ -1,0 +1,78 @@
+﻿@model Ryan_Budget.Models.Household
+
+@{
+    ViewBag.Title = "InviteOthers";
+}
+
+@if (ViewBag.Invitations.Count > 0)
+{
+<h2>Pending Invitations</h2>
+<hr />
+
+<table class="table">
+    <tr>
+        <th>
+            Email
+        </th>
+    </tr>
+
+    @foreach (var item in ViewBag.Invitations)
+    {
+        <tr>
+            <td>
+                <em>@item.InvitedUserEmail</em>
+            </td>            
+        </tr>
+    }
+</table>
+}
+<h2>Invite Others</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <input type="hidden" name="hId" value="@Model.Id"/>
+
+        @*<div class="form-group">
+            <div class="control-label col-md-2">
+                First Name
+            </div>           
+            <div class="col-md-10">
+                <input type="text" class="form-control" name="fName" required/>              
+            </div>
+        </div>*@
+
+        @*<div class="form-group">
+            <div class="control-label col-md-2">
+                Last Name
+            </div>
+            <div class="col-md-10">
+                <input type="text" class="form-control" name="lName" required />
+            </div>
+        </div>*@
+
+        <div class="form-group">
+            <div class="control-label col-md-2">
+                Email
+            </div>
+            <div class="col-md-10">
+                <input type="email" class="form-control" name="email" required />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Invite" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to Household", "Index")
+</div>
+

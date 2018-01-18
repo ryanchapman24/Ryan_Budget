@@ -1,0 +1,670 @@
+﻿@using Microsoft.AspNet.Identity;
+@using Ryan_Budget.Models;
+
+
+@{
+    ApplicationDbContext db = new ApplicationDbContext();
+    var user = db.Users.Find(User.Identity.GetUserId());
+}
+<!DOCTYPE html>
+<!--[if IE 9 ]><html class="ie ie9" lang="en" class="no-js"> <![endif]-->
+<!--[if !(IE)]><!-->
+<html lang="en" class="no-js">
+<!--<![endif]-->
+
+<head>
+    <title>Ryan Chapman | Budgeting System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="KingAdmin - Bootstrap Admin Dashboard Theme">
+    <meta name="author" content="The Develovers">
+    <!-- CSS -->
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="~/assets/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="~/assets/css/main.css" rel="stylesheet" type="text/css">
+    <link href="~/assets/css/my-custom-styles.css" rel="stylesheet" type="text/css">
+    <link href="~/assets/css/animate.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/skins/transparent.css" rel="stylesheet" type="text/css">
+    <!--[if lte IE 9]>
+        <link href="="~/assets/css/main-ie.css" rel="stylesheet" type="text/css"/>
+        <link href="="~/assets/css/main-ie-part2.css" rel="stylesheet" type="text/css"/>
+    <![endif]-->
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="~/assets/ico/kingadmin-favicon144x144.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="~/assets/ico/kingadmin-favicon114x114.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="~/assets/ico/kingadmin-favicon72x72.png">
+    <link rel="apple-touch-icon-precomposed" sizes="57x57" href="~/assets/ico/kingadmin-favicon57x57.png">
+    <link rel="shortcut icon" href="~/assets/ico/Money_Icon.png">
+</head>
+
+<body class="body">
+    <!-- WRAPPER -->
+    <div class="wrapper">
+        <!-- TOP BAR -->
+        <div class="top-bar navbar-fixed-top" style="padding-bottom: 8px; background-color: #1fa67a; border-bottom: 0.5px solid white;">
+            <div class="container">
+                <div class="row">
+                    <!-- logo -->
+                    <div class="col-md-2 logo" style="margin-top: -9px; text-align: center">
+                        <a href="@Url.Action("Index", "Home")"><span class="text-nowrap" style="font-family:'Yu Gothic'; font-size: 26px; color: white; text-decoration: none; width: 160px; height: 20px">p o c k e t</span></a>
+                        @*<img src="~/assets/img/pocketKing.png" alt="KingAdmin - Admin Dashboard" />*@
+                    </div>
+                    <!-- end logo -->
+                    <div class="col-md-10">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <!-- search box -->
+                                @*<div id="tour-searchbox" class="input-group searchbox">
+                                    <input type="search" class="form-control" placeholder="enter keyword here...">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+                                    </span>
+                                </div>*@
+                                @if ((user.HouseholdId != null) && (user.Household.Accounts.Count() > 0))
+                                {
+                                    <button class="btn btn-default btn-sm ryanmagic" style="margin-top: 2px" data-toggle="modal" data-target="#myModal">New Transaction</button>
+                                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                <h4 class="modal-title" id="myModalLabel"><i class="fa fa-credit-card"></i> Enter Transaction</h4>
+                                            </div>
+                                            <div class="modal-body">                                         
+                                                @Html.Action("Create", "Transactions")
+                                            </div>                                                                                  
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                                else
+                                {
+                                    <div style="padding-bottom: 32px"></div>
+                                }
+                                <!-- end search box -->
+                            </div>
+                            <div class="col-md-9">
+                                <div class="top-bar-right">
+                                    @*<button type="button" id="global-volume" class="btn btn-link btn-global-volume" style="margin-top: -4px"><i class="fa"></i></button>*@
+                                    <!-- responsive menu bar icon -->
+                                    <a href="#" class="hidden-md hidden-lg main-nav-toggle"><i class="fa fa-bars"></i></a>
+                                    <!-- end responsive menu bar icon -->
+                                    <a href="javascript:history.go(-1)" class=""><i class="fa fa-chevron-left" style="color: white; padding-top: 10px; padding-right: 10px; padding-left: 60px"></i></a>
+                                    <a href="javascript:history.go(+1)" class=""><i class="fa fa-chevron-right" style="color: white; padding-top: 10px; padding-right: 10px"></i></a>
+                                    <a href="javascript:history.go(0)" class=""><i class="fa fa-refresh" style="color: white; padding-top: 10px; padding-right: 10px"></i></a>
+
+                                    <div class="notifications" style="margin-top: -3px">
+                                        <ul>
+                                            <!-- notification: inbox -->
+                                            @*<li class="notification-item inbox">
+                                                    <div class="btn-group">
+                                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                            <i class="fa fa-envelope"></i><span class="count">2</span>
+                                                            <span class="circle"></span>
+                                                        </a>
+                                                        <ul class="dropdown-menu" role="menu">
+                                                            <li class="notification-header">
+                                                                <em>You have 2 unread messages</em>
+                                                            </li>
+                                                            <li class="inbox-item clearfix">
+                                                                <a href="#">
+                                                                    <div class="media">
+                                                                        <div class="media-left">
+                                                                            <img class="media-object" src="~/assets/img/user1.png" alt="Antonio">
+                                                                        </div>
+                                                                        <div class="media-body">
+                                                                            <h5 class="media-heading name">Antonius</h5>
+                                                                            <p class="text">The problem just happened this morning. I can't see ...</p>
+                                                                            <span class="timestamp">4 minutes ago</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                            </li>
+                                                            <li class="inbox-item unread clearfix">
+                                                                <a href="#">
+                                                                    <div class="media">
+                                                                        <div class="media-left">
+                                                                            <img class="media-object" src="~/assets/img/user2.png" alt="Antonio">
+                                                                        </div>
+                                                                        <div class="media-body">
+                                                                            <h5 class="media-heading name">Michael</h5>
+                                                                            <p class="text">Hey dude, cool theme!</p>
+                                                                            <span class="timestamp">2 hours ago</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                            </li>
+                                                            <li class="inbox-item unread clearfix">
+                                                                <a href="#">
+                                                                    <div class="media">
+                                                                        <div class="media-left">
+                                                                            <img class="media-object" src="~/assets/img/user3.png" alt="Antonio">
+                                                                        </div>
+                                                                        <div class="media-body">
+                                                                            <h5 class="media-heading name">Stella</h5>
+                                                                            <p class="text">Ok now I can see the status for each item. Thanks! :D</p>
+                                                                            <span class="timestamp">Oct 6</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                            </li>
+                                                            <li class="inbox-item clearfix">
+                                                                <a href="#">
+                                                                    <div class="media">
+                                                                        <div class="media-left">
+                                                                            <img class="media-object" src="~/assets/img/user4.png" alt="Antonio">
+                                                                        </div>
+                                                                        <div class="media-body">
+                                                                            <h5 class="media-heading name">Jane Doe</h5>
+                                                                            <p class="text"><i class="fa fa-reply"></i> Please check the status of your ...</p>
+                                                                            <span class="timestamp">Oct 2</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                            </li>
+                                                            <li class="inbox-item clearfix">
+                                                                <a href="#">
+                                                                    <div class="media">
+                                                                        <div class="media-left">
+                                                                            <img class="media-object" src="~/assets/img/user5.png" alt="Antonio">
+                                                                        </div>
+                                                                        <div class="media-body">
+                                                                            <h5 class="media-heading name">John Simmons</h5>
+                                                                            <p class="text"><i class="fa fa-reply"></i> I've fixed the problem :)</p>
+                                                                            <span class="timestamp">Sep 12</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                            </li>
+                                                            <li class="notification-footer">
+                                                                <a href="#">View All Messages</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </li>*@
+                                            <!-- end notification: inbox -->
+                                            <!-- notification: general -->
+                                            @if (user.Household != null)
+                                            {
+                                            <li class="notification-item general">
+                                                <div class="btn-group">
+                                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                        <i class="fa fa-bell"></i>@if (ViewBag.Notifications.Count != 0)
+                                                        {<span class="count" style="color: #1fa67a"><strong>@ViewBag.Notifications.Count</strong></span><span class="circle"></span>}
+                                                    </a>
+                                                    <ul class="dropdown-menu" role="menu" style="overflow-y:auto; margin-top: 4px; max-height: 400px">
+                                                        <li class="notification-header">
+                                                            @if (ViewBag.Notifications.Count == 0)
+                                                            {
+                                                                <em>You don't have any notifications.</em>
+                                                            }
+                                                            else if (ViewBag.Notifications.Count == 1)
+                                                            {
+                                                                <em>You have @ViewBag.Notifications.Count notification.</em>
+                                                            }
+                                                            else
+                                                            {
+                                                                <em>You have @ViewBag.Notifications.Count notifications.</em>
+                                                            }
+                                                        </li>
+                                                        @if (Request.IsAuthenticated && (ViewBag.Notifications.Count != 0))
+                                                        {
+                                                            foreach (var notification in ViewBag.Notifications)
+                                                            {
+                                                                if (notification.Type == "Member Join")
+                                                                {
+                                                                <li>
+                                                                    <a href="@Url.Action("DismissNotification", "Home", new { uId = notification.AuthorUserId, nId = notification.Id, dA = false })">
+                                                                        <i class="fa fa-user" style="color: #1fa67a"></i>
+                                                                        <span class="text">@notification.Description</span>
+                                                                        <span class="timestamp">@notification.Created.ToString("d")</span>
+                                                                    </a>
+                                                                </li>
+                                                                }
+                                                                if (notification.Type == "Member Leave")
+                                                                {
+                                                                    <li>
+                                                                        <a href="@Url.Action("DismissNotification", "Home", new { hId = notification.HouseholdId, nId = notification.Id, dA = false })">
+                                                                            <i class="fa fa-user" style="color: #d9534f"></i>
+                                                                            <span class="text">@notification.Description</span>
+                                                                            <span class="timestamp">@notification.Created.ToString("d")</span>
+                                                                        </a>
+                                                                    </li>
+                                                                }
+                                                                if (notification.Type == "New Note")
+                                                                {
+                                                                    <li>
+                                                                        <a href="@Url.Action("DismissNotification", "Home", new { hId = notification.HouseholdId, nId = notification.Id, dA = false })">
+                                                                            <i class="fa fa-sticky-note" style="color: #eaeaea"></i>
+                                                                            <span class="text">@notification.Description</span>
+                                                                            <span class="timestamp">@notification.Created.ToString("d")</span>
+                                                                        </a>
+                                                                    </li>
+                                                                }
+                                                                if (notification.Type == "New Account")
+                                                                {
+                                                                    <li>
+                                                                        <a href="@Url.Action("DismissNotification", "Home", new { aId = notification.AccountId, nId = notification.Id, dA = false })">
+                                                                            <i class="fa fa-money" style="color: #1fa67a"></i>
+                                                                            <span class="text">@notification.Description</span>
+                                                                            <span class="timestamp">@notification.Created.ToString("d")</span>
+                                                                        </a>
+                                                                    </li>
+                                                                }
+                                                                if (notification.Type == "Account Deleted")
+                                                                {
+                                                                    <li>
+                                                                        <a href="@Url.Action("DismissNotification", "Home", new { nId = notification.Id, dA = false })">
+                                                                            <i class="fa fa-money" style="color: #d9534f"></i>
+                                                                            <span class="text">@notification.Description</span>
+                                                                            <span class="timestamp">@notification.Created.ToString("d")</span>
+                                                                        </a>
+                                                                    </li>
+                                                                }
+                                                                if (notification.Type == "New Budget")
+                                                                {
+                                                                    <li>
+                                                                        <a href="@Url.Action("DismissNotification", "Home", new { bId = notification.BudgetId, nId = notification.Id, dA = false })">
+                                                                            <i class="fa fa-bar-chart" style="color: #1fa67a"></i>
+                                                                            <span class="text">@notification.Description</span>
+                                                                            <span class="timestamp">@notification.Created.ToString("d")</span>
+                                                                        </a>
+                                                                    </li>
+                                                                }
+                                                                if (notification.Type == "Budget Deleted")
+                                                                {
+                                                                    <li>
+                                                                        <a href="@Url.Action("DismissNotification", "Home", new { nId = notification.Id, dA = false })">
+                                                                            <i class="fa fa-bar-chart" style="color: #d9534f"></i>
+                                                                            <span class="text">@notification.Description</span>
+                                                                            <span class="timestamp">@notification.Created.ToString("d")</span>
+                                                                        </a>
+                                                                    </li>
+                                                                }
+                                                                if (notification.Type == "Overdraft Notice")
+                                                                {
+                                                                    <li>
+                                                                        <a href="@Url.Action("DismissNotification", "Home", new { aId = notification.AccountId, nId = notification.Id, dA = false })">
+                                                                            <i class="fa fa-warning" style="color: #d9534f"></i>
+                                                                            <span class="text" style="color: #d9534f">@notification.Description</span>
+                                                                            <span class="timestamp">@notification.Created.ToString("d")</span>
+                                                                        </a>
+                                                                    </li>
+                                                                }
+                                                            }
+                                                        }
+                                                        @if (ViewBag.Notifications.Count > 1)
+                                                        {
+                                                        <li class="notification-footer">
+                                                            <a href="@Url.Action("DismissNotification", "Home", new { dA = true })" style="color: #1fa67a; text-decoration: none">Dismiss All</a>
+                                                        </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            }
+                                            <!-- end notification: general -->
+                                        </ul>
+                                    </div>
+                                    <!-- logged user and the menu -->
+                                    @Html.Partial("_LoginPartial")
+                                    <!-- end logged user and the menu -->
+                                </div>
+                                <!-- /top-bar-right -->
+                            </div>
+                        </div>
+                        <!-- /row -->
+                    </div>
+                </div>
+                <!-- /row -->
+            </div>
+            <!-- /container -->
+        </div>
+        <!-- /top -->
+        <!-- BOTTOM: LEFT NAV AND RIGHT MAIN CONTENT -->
+        <div class="bottom" style="overflow-x: hidden">
+            <div class="container">
+                <div class="row">
+                    <!-- left sidebar -->
+                    <div class="col-md-2 left-sidebar animated fadeInLeftBig" style="margin-right: 20px">
+                        <!-- main-nav -->
+                        <nav class="main-nav">
+                            <img class="img-responsive" src="~/assets/img/Money_Icon.png" style="background-color: #eaeaea; width: 100%; padding-left: 15px; padding-top: 15px; padding-bottom: 15px; padding-right: 15px" />
+                            <ul class="main-menu">
+                                <li class="">
+                                    <a href="@Url.Action("Index", "Home")" class="">
+                                        <i class="fa fa-fire fa-fw"></i><span class="text">Dashboard</span>
+                                        @*<i class="toggle-icon fa fa-angle-down"></i>*@
+                                    </a>
+                                </li>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li class="">
+                                        <a href="@Url.Action("Index", "Admin")" class="">
+                                            <i class="fa fa-key fa-fw"></i><span class="text">Admin</span>
+                                            @*<i class="toggle-icon fa fa-angle-down"></i>*@
+                                        </a>
+                                    </li>
+                                }
+                                <li>
+                                    <a href="#" class="js-sub-menu-toggle">
+                                        <i class="fa fa-home fa-fw"></i><span class="text">Household</span>
+                                        <i class="toggle-icon fa fa-angle-left"></i>
+                                    </a>
+                                    <ul class="sub-menu ">
+                                        @if (Request.IsAuthenticated)
+                                        {
+                                            if (user.HouseholdId != null)
+                                            {
+                                                <li><a href="@Url.Action("Index", "Household")"><span class="text">My Household</span></a></li>
+                                                <li><a href="@Url.Action("Index","Budgets")"><span class="text">My Budgets</span></a></li>
+                                            }
+                                            if (user.HouseholdId == null)
+                                            {
+                                                <li><a href="@Url.Action("CreateJoin", "Household")"><span class="text">Create/Join</span></a></li>
+                                            }
+                                        }
+                                    </ul>
+                                </li>
+                                @if (user.HouseholdId != null)
+                                {
+                                    <li>
+                                        <a href="#" class="js-sub-menu-toggle">
+                                            <i class="fa fa-money"></i>
+                                            <span class="text">Accounts</span>
+                                            <i class="toggle-icon fa fa-angle-left"></i>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            @if (user.Household.Accounts.Count() != 0)
+                                            {
+                                                <li class="">
+                                                    <a href="#" class="js-sub-menu-toggle">
+                                                        <span class="text">My Accounts</span>
+                                                        <i class="toggle-icon fa fa-angle-left"></i>
+                                                    </a>
+                                                    <ul class="sub-menu">
+                                                        @foreach (var account in user.Household.Accounts)
+                                                        {
+                                                            <li><a href="@Url.Action("Details", "Accounts", new { id = account.Id }) "><span class="text" style="color: #1fa67a">@account.Name</span></a></li>
+                                                        }
+                                                        <li><a href="@Url.Action("Index", "Accounts")"><span class="text">All</span></a></li>
+                                                    </ul>
+                                                </li>
+                                            }
+                                            <li>
+                                                <a href="@Url.Action("Create", "Accounts", new { id = user.HouseholdId })"><span class="text">Add Account</span></a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                }
+
+                                <li class="">
+                                    <a href="@Url.Action("ProfilePage", "Home", new { id = User.Identity.GetUserId() })" class="">
+                                        <i class="fa fa-user-plus fa-fw"></i><span class="text">Profile</span>
+                                        @*<i class="toggle-icon fa fa-angle-down"></i>*@
+                                    </a>
+                                </li>
+                                @*<li class="active"><a href="@Url.Action("Index", "Home")" class="js-sub-menu-toggle"><i class="fa fa-dashboard fa-fw"></i><span class="text">Dashboard</span>
+                                        <i class="toggle-icon fa fa-angle-down"></i></a>
+                                        <ul class="sub-menu open">
+                                            <li class="active"><a href="index.html"><span class="text">Dashboard v1</span></a></li>
+                                            <li><a href="index-transparent.html"><span class="text">Dashboard v1 Transparent <span class="badge element-bg-color-blue">New</span></span></a></li>
+                                            <li><a href="index-dashboard-v2.html"><span class="text">Dashboard v2</span></a></li>
+                                            <li><a href="index-dashboard-v2-transparent.html"><span class="text">Dashboard v2 Transparent <span class="badge element-bg-color-blue">New</span></span></a></li>
+                                            <li><a href="index-dashboard-v3.html"><span class="text">Dashboard v3 <span class="badge element-bg-color-blue">New</span></span></a></li>
+                                        </ul>
+                                    </li>*@
+                                @*<li><a href="#" class="js-sub-menu-toggle"><i class="fa fa-bar-chart-o fw"></i><span class="text">Charts &amp; Statistics</span>
+                                        <i class="toggle-icon fa fa-angle-left"></i></a>
+                                        <ul class="sub-menu ">
+                                            <li><a href="charts-statistics.html"><span class="text">Charts</span></a></li>
+                                            <li><a href="charts-statistics-transparent.html"><span class="text">Charts Transparent <span class="badge element-bg-color-blue">New</span></span></a></li>
+                                            <li><a href="charts-statistics-interactive.html"><span class="text">Interactive Charts</span></a></li>
+                                            <li><a href="charts-statistics-interactive-transparent.html"><span class="text">Interactive Charts Transparent <span class="badge element-bg-color-blue">New</span></span></a></li>
+                                            <li><a href="charts-statistics-real-time.html"><span class="text">Realtime Charts</span></a></li>
+                                            <li><a href="charts-statistics-real-time-transparent.html"><span class="text">Realtime Charts Transparent <span class="badge element-bg-color-blue">New</span></span></a></li>
+                                            <li><a href="charts-d3charts.html"><span class="text">D3 Charts</span></a></li>
+                                        </ul>
+                                    </li>*@
+                                @*<li><a href="#" class="js-sub-menu-toggle"><i class="fa fa-edit fw"></i><span class="text">Forms</span>
+                                        <i class="toggle-icon fa fa-angle-left"></i></a>
+                                        <ul class="sub-menu ">
+                                            <li><a href="form-inplace-editing.html"><span class="text">In-place Editing</span></a></li>
+                                            <li><a href="form-elements.html"><span class="text">Form Elements</span></a></li>
+                                            <li><a href="form-layouts.html"><span class="text">Form Layouts</span></a></li>
+                                            <li><a href="form-bootstrap-elements.html"><span class="text">Bootstrap Elements</span></a></li>
+                                            <li><a href="form-validations.html"><span class="text">Validation</span></a></li>
+                                            <li><a href="form-file-upload.html"><span class="text">File Upload</span></a></li>
+                                            <li><a href="form-text-editor.html"><span class="text">Text Editor</span></a></li>
+                                        </ul>
+                                    </li>*@
+                                @*<li><a href="#" class="js-sub-menu-toggle"><i class="fa fa-list-alt fw"></i><span class="text">UI Elements</span>
+                                        <i class="toggle-icon fa fa-angle-left"></i></a>
+                                        <ul class="sub-menu ">
+                                            <li><a href="ui-elements-general.html"><span class="text">General Elements</span></a></li>
+                                            <li><a href="ui-elements-tabs.html"><span class="text">Tabs</span></a></li>
+                                            <li><a href="ui-elements-buttons.html"><span class="text">Buttons</span></a></li>
+                                            <li><a href="ui-elements-icons.html"><span class="text">Icons <span class="badge element-bg-color-blue">Updated</span></span></a></li>
+                                            <li><a href="ui-elements-flash-message.html"><span class="text">Flash Message</span></a></li>
+                                        </ul>
+                                    </li>*@
+                                @*<li><a href="widgets.html"><i class="fa fa-puzzle-piece fa-fw"></i><span class="text">Widgets</span></a></li>*@
+                                @*<li><a href="#" class="js-sub-menu-toggle"><i class="fa fa-gears fw"></i><span class="text">Components</span>
+                                        <i class="toggle-icon fa fa-angle-left"></i></a>
+                                        <ul class="sub-menu ">
+                                            <li><a href="components-wizard.html"><span class="text">Wizard (with validation)</span></a></li>
+                                            <li><a href="components-calendar.html"><span class="text">Calendar</span></a></li>
+                                            <li><a href="components-maps.html"><span class="text">Maps</span></a></li>
+                                            <li><a href="components-maps-transparent.html"><span class="text">Maps Transparent <span class="badge element-bg-color-blue">New</span></span></a></li>
+                                            <li><a href="components-gallery.html"><span class="text">Gallery</span></a></li>
+                                            <li><a href="components-tree-view.html"><span class="text">Tree View </span></a></li>
+                                            <li><a href="components-tree-view-transparent.html"><span class="text">Tree View Transparent <span class="badge element-bg-color-blue">New</span></span></a></li>
+                                        </ul>
+                                    </li>*@
+                                @*<li><a href="#" class="js-sub-menu-toggle"><i class="fa fa-table fw"></i><span class="text">Tables</span>
+                                        <i class="toggle-icon fa fa-angle-left"></i></a>
+                                        <ul class="sub-menu ">
+                                            <li><a href="tables-static-table.html"><span class="text">Static Table</span></a></li>
+                                            <li><a href="tables-dynamic-table.html"><span class="text">Dynamic Table</span></a></li>
+                                        </ul>
+                                    </li>*@
+                                @*<li><a href="typography.html"><i class="fa fa-font fa-fw"></i><span class="text">Typography</span></a></li>*@
+                                @*<li>
+                                        <a href="#" class="js-sub-menu-toggle"><i class="fa fa-bars"></i>
+                                            <span class="text">Menu Lvl 1</span>
+                                            <i class="toggle-icon fa fa-angle-left"></i>
+                                        </a>
+                                        <ul class="sub-menu">
+                                            <li class="">
+                                                <a href="#" class="js-sub-menu-toggle">
+                                                    <span class="text">Menu Lvl 2</span>
+                                                    <i class="toggle-icon fa fa-angle-left"></i>
+                                                </a>
+                                                <ul class="sub-menu">
+                                                    <li><a href="#">Menu Lvl 3</a></li>
+                                                    <li><a href="#">Menu Lvl 3</a></li>
+                                                    <li><a href="#">Menu Lvl 3</a></li>
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <span class="text">Menu Lvl 2</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>*@
+                            </ul>
+                        </nav>
+                        <!-- /main-nav -->
+                        @*<div class="sidebar-minified js-toggle-minified">
+                            <i class="fa fa-angle-left"></i>
+                        </div>*@
+                        <!-- sidebar content -->
+                        <div class="sidebar-content">
+                            <div class="panel panel-default">
+                                <div class="panel-heading" style="background-color: #eaeaea; color: #4d4d4d">
+                                    <h5><i class="fa fa-lightbulb-o"></i> Tips</h5>
+                                </div>
+                                <div class="panel-body" style="background-color: #1fa67a; color: white">
+                                    <p>To create a household, click "Household" in the side-bar.  Then click "Create/Join."  If you want to invite other users to your household, you can invite them via your Household page, which will be selectable in the sidebar under "Household" once you are part of a household.</p>
+                                    <hr style="color: white" />
+                                    <p>To join a household, click the link in your invitation email, then proceed to the Join section of the Create/Join page.  Simply click "Join" and you're all set!</p>
+                                    <hr style="color: white" />
+                                    <p>Once you're in a household, you will want to link your bank accounts.  To do this, click "Accounts" in the side-bar, then click "Add Account."</p>
+                                    <hr style="color: white" />
+                                    <p>After you have at least one account linked to your household, you can add a new transaction from anywhere on the site via the "New Transaction" button on the nav-bar.</p>
+                                </div>
+                            </div>
+                            @*<h5 class="label label-default"><i class="fa fa-info-circle"></i> Server Info</h5>*@
+                            @*<ul class="list-unstyled list-info-sidebar bottom-30px">
+                                    <li class="data-row">
+                                        <div class="data-name">Disk Space Usage</div>
+                                        <div class="data-value">
+                                            274.43 / 2 GB
+                                            <div class="progress progress-xs">
+                                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%">
+                                                    <span class="sr-only">10%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="data-row">
+                                        <div class="data-name">Monthly Bandwidth Transfer</div>
+                                        <div class="data-value">
+                                            230 / 500 GB
+                                            <div class="progress progress-xs">
+                                                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="46" aria-valuemin="0" aria-valuemax="100" style="width: 46%">
+                                                    <span class="sr-only">46%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="data-row">
+                                        <span class="data-name">Database Disk Space</span>
+                                        <span class="data-value">219.45 MB</span>
+                                    </li>
+                                    <li class="data-row">
+                                        <span class="data-name">Operating System</span>
+                                        <span class="data-value">Linux</span>
+                                    </li>
+                                    <li class="data-row">
+                                        <span class="data-name">Apache Version</span>
+                                        <span class="data-value">2.4.6</span>
+                                    </li>
+                                    <li class="data-row">
+                                        <span class="data-name">PHP Version</span>
+                                        <span class="data-value">5.3.27</span>
+                                    </li>
+                                    <li class="data-row">
+                                        <span class="data-name">MySQL Version</span>
+                                        <span class="data-value">5.5.34-cll</span>
+                                    </li>
+                                    <li class="data-row">
+                                        <span class="data-name">Architecture</span>
+                                        <span class="data-value">x86_64</span>
+                                    </li>
+                                </ul>*@
+                        </div>
+                        <!-- end sidebar content -->
+                    </div>
+                    <!-- end left sidebar -->
+                    <!-- main -->
+                    <div class="col-md-10 content-wrapper animated fadeInRightBig background" style="padding-top: 30px; min-height: 1100px; margin-right: -20px">
+                        @if ((user.HouseholdId != null) && (user.Household.Accounts.Count() > 0))
+                        {
+                            var overdrafts = user.Household.Accounts.Where(a => a.Balance < 0);
+
+                            <div class="row" style="margin-right: 0px">
+                                <div class="col-lg-9 col-lg-offset-3">
+                                    <div class="top-content">
+                                        <ul class="list-inline quick-access">
+                                            @foreach (var account in overdrafts)
+                                            {
+                                            <li>
+                                                <a href="@Url.Action("Details", "Accounts", new { id = account.Id }, null)">
+                                                    <div class="quick-access-item bg-color-green" style="padding-top: 8px; padding-bottom: 8px; box-shadow: 5px 5px 5px black">
+                                                        <i class="fa fa-warning"></i>
+                                                        <h5>@account.Name.ToUpper()</h5><em>overdraft warning</em><br />@String.Format("{0:C}", account.Balance)
+                                                    </div>
+                                                </a>
+                                            </li>                                                                               
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div> 
+                        }
+                        @RenderBody()
+                    </div>
+                    <!-- /main -->
+                </div>
+                <!-- /row -->
+            </div>
+            <!-- /container -->
+        </div>
+        <!-- END BOTTOM: LEFT NAV AND RIGHT MAIN CONTENT -->
+    </div>
+    <!-- /wrapper -->
+    <!-- FOOTER -->
+    <footer class="footer" style="">
+        &copy; Ryan Chapman | Budgeting System
+    </footer>
+    <!-- END FOOTER -->
+    <!-- Javascript -->
+    <script src="~/assets/js/jquery/jquery-2.1.0.min.js"></script>
+    <script src="~/assets/js/bootstrap/bootstrap.js"></script>
+    <script src="~/assets/js/plugins/modernizr/modernizr.js"></script>
+    <script src="~/assets/js/plugins/bootstrap-tour/bootstrap-tour.custom.js"></script>
+    <script src="~/assets/js/king-common.js"></script>
+    <script src="~/assets/js/plugins/stat/jquery.easypiechart.min.js"></script>
+    <script src="~/assets/js/plugins/raphael/raphael-2.1.0.min.js"></script>
+    <script src="~/assets/js/plugins/stat/flot/jquery.flot.min.js"></script>
+    <script src="~/assets/js/plugins/stat/flot/jquery.flot.resize.min.js"></script>
+    <script src="~/assets/js/plugins/stat/flot/jquery.flot.time.min.js"></script>
+    <script src="~/assets/js/plugins/stat/flot/jquery.flot.pie.min.js"></script>
+    <script src="~/assets/js/plugins/stat/flot/jquery.flot.orderBars.js"></script>
+    <script src="~/assets/js/plugins/stat/flot/jquery.flot.tooltip.min.js"></script>
+    <script src="~/assets/js/plugins/jquery-sparkline/jquery.sparkline.min.js"></script>
+    <script src="~/assets/js/plugins/datatable/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/plugins/datatable/dataTables.bootstrap.js"></script>
+    <script src="~/assets/js/plugins/jquery-mapael/jquery.mapael.js"></script>
+    <script src="~/assets/js/plugins/raphael/maps/usa_states.js"></script>
+    <script src="~/assets/js/king-chart-stat-transparent.js"></script>
+    <script src="~/assets/js/king-table.js"></script>
+    <script src="~/assets/js/king-components.js"></script>
+    <script src="~/assets/js/plugins/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="~/assets/js/plugins/bootstrap-multiselect/bootstrap-multiselect.js"></script>
+    <script src="~/assets/js/king-form-layouts.js"></script>
+    <script src="~/assets/js/plugins/bootstrap-switch/bootstrap-switch.min.js"></script>
+    <script src="~/assets/js/plugins/jquery-maskedinput/jquery.masked-input.min.js"></script>
+    <script src="~/assets/js/jquery-ui/jquery-ui-1.10.4.custom.min.js"></script>
+    <script src="~/assets/js/plugins/jqallrangesliders/jQAllRangeSliders-min.js"></script>
+    <script src="~/assets/js/plugins/bootstrap-colorpicker/bootstrap-colorpicker.min.js"></script>
+    <script src="~/assets/js/plugins/jquery-simplecolorpicker/jquery.simplecolorpicker.js"></script>
+    <script src="~/assets/js/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+    <script src="~/assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/assets/js/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="~/assets/js/plugins/moment/moment.min.js"></script>
+    <script src="~/assets/js/plugins/bootstrap-slider/bootstrap-slider.js"></script>
+    <script src="~/assets/js/plugins/select2/select2.min.js"></script>
+    <script src="~/assets/js/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js"></script>
+    <script src="~/assets/js/plugins/bootstrap-progressbar/bootstrap-progressbar.js"></script>
+    <script src="~/assets/js/king-elements.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#datepicker').datepicker().on('changeDate', function (ev) {
+                $(this).datepicker('hide');
+            });
+            $("#credit").click(function () {
+                $('#debit').removeAttr("checked");
+            });
+            $("#debit").click(function () {
+                $('#credit').removeAttr("checked");
+            });
+        });
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+
+</html>

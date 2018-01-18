@@ -1,0 +1,65 @@
+﻿@model Ryan_Budget.Models.Household
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Leave Household</h2>
+
+<h3>Are you sure you want to leave this Household?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Created)
+        </dt>
+
+        <dd>
+            @Model.Created.ToString("d")
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Updated)
+        </dt>
+
+        <dd>
+            @if (Model.Updated.HasValue)
+            {
+                @Model.Updated.Value.ToString("d")
+            }
+        </dd>
+
+        <dt>
+            Users
+        </dt>
+
+        <dd>
+            @foreach (var user in Model.Users)
+            {
+                @user.DisplayName<br />
+            }
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Leave" class="btn btn-default" />
+            </div>
+        </div>
+
+        <div>
+            @Html.ActionLink("Back to Household", "Index", "Household")
+        </div>
+    }
+</div>

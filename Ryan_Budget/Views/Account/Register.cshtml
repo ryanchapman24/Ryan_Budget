@@ -1,0 +1,49 @@
+﻿@using Ryan_Budget.Models
+@model Ryan_Budget.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+<div class="wrapper full-page-wrapper page-auth page-register text-center">
+    <div class="inner-page" style="margin-top: -30px">
+        <div class="logo">
+            <img class="animated rotateIn" style="margin-left: -20px; margin-bottom: 30px; margin-left: 8px; margin-right: 8px; width: 150px" src="~/assets/img/Money_Icon.png" alt="" />
+            <span class="text-nowrap" style="font-family:'Yu Gothic'; margin-left: 8px; margin-right: 8px; font-size: 72px; color: white; text-decoration: none; width: 300px">p o c k e t</span>
+        </div>
+        <div style="margin-top: -35px" class="animated zoomIn register-box center-block">
+            @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                <form>
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <p class="title">Create Your Account</p>
+                    @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = "first name" })
+                    @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                    @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", placeholder = "last name" })
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "email" })
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "password" })
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "confirm password" })
+                    <input name="image" type="file" class="form-control" id="fileUpload" />
+                    @Html.ValidationMessageFor(model => model.ProfilePic, "", new { @class = "text-danger" })
+                    <label class="fancy-checkbox">
+                        <input type="checkbox">
+                        <span>I accept the <a href="#">Terms &amp; Agreements</a></span>
+                    </label>
+                    <button class="btn btn-custom-primary btn-lg btn-block btn-auth"><i class="fa fa-check-circle"></i> Create Account</button>
+                </form>
+            }
+        </div>
+        <div class="separator"><span>OR</span></div>
+        <div style="height: 100px">
+            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

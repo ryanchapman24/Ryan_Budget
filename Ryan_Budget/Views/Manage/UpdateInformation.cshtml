@@ -1,0 +1,85 @@
+﻿@model Ryan_Budget.Models.UpdateInformationViewModel
+@{
+    ViewBag.Title = "Update Information";
+}
+
+<h2>Update Information</h2>
+
+@using (Html.BeginForm("UpdateInformation", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.ProfilePic)
+    <h4>Update Information Form</h4>
+    <hr />
+
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(m => m.FirstName, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.LastName, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-2 control-label">Profile Picture</div>
+        <div class="col-md-10">
+            <input name="image" type="file" class="form-control" id="fileUploadThree" />
+            <div id="fileDisplay" style="max-width: 180px; padding-top: 10px">
+                @if (Model.ProfilePic != null)
+                {
+                    <img src="@Model.ProfilePic" alt="Profile Picture" style="border: 3px solid #fff; margin-top: 15px; max-width: 180px; background-color: white" />
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Update" class="btn btn-default" />
+            <a href="javascript:history.go(-1)" class="btn btn-custom-primary"><i class="fa fa-arrow-left"></i> Cancel</a>
+        </div>
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+<script>
+
+        var fileInput = document.getElementById('fileUploadThree');
+        var fileDisplayArea = document.getElementById('fileDisplay');
+
+        //File Reader Function for displaying images
+        fileInput.addEventListener('change', function (e) {
+            var file = fileInput.files[0];
+            var imageType = /image.*/;
+
+            if (file.type.match(imageType)) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    fileDisplayArea.innerHTML = "";
+
+                    // Create a new image.
+                    var img = new Image();
+                    // Set the img src property using the data URL.
+                    img.src = reader.result;
+                    // Add the image to the page.
+                    fileDisplayArea.appendChild(img);
+                }
+
+                reader.readAsDataURL(file);
+            }
+
+            else {
+                fileDisplayArea.innerHTML = "File not supported!";
+            }
+        });
+</script>
+}

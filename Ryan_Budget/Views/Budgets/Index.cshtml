@@ -1,0 +1,310 @@
+﻿@model IEnumerable<Ryan_Budget.Models.Budget>
+@using Microsoft.AspNet.Identity;
+@using Ryan_Budget.Models;
+
+@{
+    ViewBag.Title = "Index";
+    ApplicationDbContext db = new ApplicationDbContext();
+    var user = db.Users.Find(User.Identity.GetUserId());
+    var transactions = user.Household.Accounts.SelectMany(a => a.Transactions);
+}
+
+<h2>@user.Household.Name - Budgets</h2>
+<a href="@Url.Action("Create", "Budgets", new { id = user.HouseholdId })"><div class="label" style="background-color: #1fa67a"><i class="fa fa-plus"></i> Add Budget</div></a>
+<!-- NAV TABS -->
+<ul class="nav nav-tabs nav-tabs-custom-colored tabs-iconized" style="margin-top: -20px">
+    <li class="pull-right"><a href="#settings-tab" data-toggle="tab"><i class="fa fa-gear"></i> Yearly</a></li>
+    <li class="pull-right"><a href="#activity-tab" data-toggle="tab"><i class="fa fa-rss"></i> Monthly</a></li>
+    <li class="active pull-right"><a href="#profile-tab" data-toggle="tab"><i class="fa fa-user"></i> Weekly</a></li>
+</ul>
+<!-- END NAV TABS -->
+<div class="tab-content profile-page" style="padding-left: 0px; padding-right: 0px">
+    <!-- PROFILE TAB CONTENT -->
+    <div class="tab-pane profile active" id="profile-tab">
+        @using FluentDateTime;
+        @foreach (var budget in Model.Where(b => b.Frequency.Length == "Weekly"))
+        {
+            var prevSunday = DateTime.Now.Previous(DayOfWeek.Sunday);
+            var nextMonday = DateTime.Now.Next(DayOfWeek.Monday);
+            var weeklyBudgetTransactionTotal = transactions.Where(t => t.CategoryId == budget.CategoryId && t.Created > prevSunday && t.Created < nextMonday && t.Status != "VOID").Sum(t => t.Amount);
+            var weeklyBudgetTransactionPercentage = Math.Round((Math.Abs(weeklyBudgetTransactionTotal) / budget.Amount) * 100);
+
+            if (weeklyBudgetTransactionPercentage < 80)
+            {
+                <div class="col-md-6">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fa fa-bar-chart-o"></i>@budget.Frequency.Length @budget.Category.Name Budget</h3>
+                            <div class="widget-header-toolbar">
+                                <h3>@String.Format("{0:C}", Math.Abs(weeklyBudgetTransactionTotal)) / @String.Format("{0:C}", budget.Amount)</h3>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="progress demo-only progress-striped active">
+                                <div class="progress-bar progress-bar-good" data-transitiongoal="@weeklyBudgetTransactionPercentage"></div>
+                            </div>
+                        </div>
+                        <div class="widget-footer" style="font-size: 16px">
+                            <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-original-title="@budget.Description" style="color: #1fa67a; font-size: 18px"></i>
+                            <div class="btn-group pull-right">
+                                <a href="@Url.Action("Edit", "Budgets", new { id = budget.Id })"><i class="fa fa-edit"></i></a> |
+                                <a href="@Url.Action("Details", "Budgets", new { id = budget.Id })"><i class="fa fa-th-list"></i></a> |
+                                <a href="@Url.Action("Delete", "Budgets", new { id = budget.Id })"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            if (weeklyBudgetTransactionPercentage >= 80 && weeklyBudgetTransactionPercentage < 100)
+            {
+                <div class="col-md-6">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fa fa-bar-chart-o"></i>@budget.Frequency.Length @budget.Category.Name Budget</h3>
+                            <div class="widget-header-toolbar">
+                                <h3><i class="fa fa-exclamation" style="color: #b3b300"></i>@String.Format("{0:C}", Math.Abs(weeklyBudgetTransactionTotal)) / @String.Format("{0:C}", budget.Amount)</h3>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="progress demo-only progress-striped active">
+                                <div class="progress-bar progress-bar-caution" data-transitiongoal="@weeklyBudgetTransactionPercentage"></div>
+                            </div>
+                        </div>
+                        <div class="widget-footer" style="font-size: 16px">
+                            <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-original-title="@budget.Description" style="color: #1fa67a; font-size: 18px"></i>
+                            <div class="btn-group pull-right">
+                                <a href="@Url.Action("Edit", "Budgets", new { id = budget.Id })"><i class="fa fa-edit"></i></a> |
+                                <a href="@Url.Action("Details", "Budgets", new { id = budget.Id })"><i class="fa fa-th-list"></i></a> |
+                                <a href="@Url.Action("Delete", "Budgets", new { id = budget.Id })"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            if (weeklyBudgetTransactionPercentage >= 100)
+            {
+                <div class="col-md-6">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fa fa-bar-chart-o"></i>@budget.Frequency.Length @budget.Category.Name Budget</h3>
+                            <div class="widget-header-toolbar">
+                                <h3><i class="fa fa-warning" style="color: #d9534f"></i>@String.Format("{0:C}", Math.Abs(weeklyBudgetTransactionTotal)) / @String.Format("{0:C}", budget.Amount)</h3>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="progress demo-only progress-striped active">
+                                <div class="progress-bar progress-bar-bad" data-transitiongoal="@weeklyBudgetTransactionPercentage"></div>
+                            </div>
+                        </div>
+                        <div class="widget-footer" style="font-size: 16px">
+                            <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-original-title="@budget.Description" style="color: #1fa67a; font-size: 18px"></i>
+                            <div class="btn-group pull-right">
+                                <a href="@Url.Action("Edit", "Budgets", new { id = budget.Id })"><i class="fa fa-edit"></i></a> |
+                                <a href="@Url.Action("Details", "Budgets", new { id = budget.Id })"><i class="fa fa-th-list"></i></a> |
+                                <a href="@Url.Action("Delete", "Budgets", new { id = budget.Id })"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        } 
+    </div>
+    <!-- END PROFILE TAB CONTENT -->
+    <!-- ACTIVITY TAB CONTENT -->
+    <div class="tab-pane activity" id="activity-tab">
+        @using FluentDateTime;
+        @foreach (var budget in Model.Where(b => b.Frequency.Length == "Monthly"))
+        {
+            var moy = DateTime.Now.Month;
+            var currentYear = DateTime.Now.Year;
+            var monthlyBudgetTransactionTotal = transactions.Where(t => t.CategoryId == budget.CategoryId && t.Created.Month == moy && t.Created.Year == currentYear && t.Status != "VOID").Sum(t => t.Amount);
+            var monthlyBudgetTransactionPercentage = Math.Round((Math.Abs(monthlyBudgetTransactionTotal) / budget.Amount) * 100);
+
+            if (monthlyBudgetTransactionPercentage < 80)
+            {
+                <div class="col-md-6">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fa fa-bar-chart-o"></i>@budget.Frequency.Length @budget.Category.Name Budget</h3>
+                            <div class="widget-header-toolbar">
+                                <h3>@String.Format("{0:C}", Math.Abs(monthlyBudgetTransactionTotal)) / @String.Format("{0:C}", budget.Amount)</h3>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="progress demo-only progress-striped active">
+                                <div class="progress-bar progress-bar-good" data-transitiongoal="@monthlyBudgetTransactionPercentage"></div>
+                            </div>
+                        </div>
+                        <div class="widget-footer" style="font-size: 16px">
+                            <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-original-title="@budget.Description" style="color: #1fa67a; font-size: 18px"></i>
+                            <div class="btn-group pull-right">
+                                <a href="@Url.Action("Edit", "Budgets", new { id = budget.Id })"><i class="fa fa-edit"></i></a> |
+                                <a href="@Url.Action("Details", "Budgets", new { id = budget.Id })"><i class="fa fa-th-list"></i></a> |
+                                <a href="@Url.Action("Delete", "Budgets", new { id = budget.Id })"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            if (monthlyBudgetTransactionPercentage >= 80 && monthlyBudgetTransactionPercentage < 100)
+            {
+                <div class="col-md-6">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fa fa-bar-chart-o"></i>@budget.Frequency.Length @budget.Category.Name Budget</h3>
+                            <div class="widget-header-toolbar">
+                                <h3><i class="fa fa-exclamation" style="color: #b3b300"></i>@String.Format("{0:C}", Math.Abs(monthlyBudgetTransactionTotal)) / @String.Format("{0:C}", budget.Amount)</h3>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="progress demo-only progress-striped active">
+                                <div class="progress-bar progress-bar-caution" data-transitiongoal="@monthlyBudgetTransactionPercentage"></div>
+                            </div>
+                        </div>
+                        <div class="widget-footer" style="font-size: 16px">
+                            <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-original-title="@budget.Description" style="color: #1fa67a; font-size: 18px"></i>
+                            <div class="btn-group pull-right">
+                                <a href="@Url.Action("Edit", "Budgets", new { id = budget.Id })"><i class="fa fa-edit"></i></a> |
+                                <a href="@Url.Action("Details", "Budgets", new { id = budget.Id })"><i class="fa fa-th-list"></i></a> |
+                                <a href="@Url.Action("Delete", "Budgets", new { id = budget.Id })"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            if (monthlyBudgetTransactionPercentage >= 100)
+            {
+                <div class="col-md-6">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fa fa-bar-chart-o"></i>@budget.Frequency.Length @budget.Category.Name Budget</h3>
+                            <div class="widget-header-toolbar">
+                                <h3><i class="fa fa-warning" style="color: #d9534f"></i>@String.Format("{0:C}", Math.Abs(monthlyBudgetTransactionTotal)) / @String.Format("{0:C}", budget.Amount)</h3>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="progress demo-only progress-striped active">
+                                <div class="progress-bar progress-bar-bad" data-transitiongoal="@monthlyBudgetTransactionPercentage"></div>
+                            </div>
+                        </div>
+                        <div class="widget-footer" style="font-size: 16px">
+                            <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-original-title="@budget.Description" style="color: #1fa67a; font-size: 18px"></i>
+                            <div class="btn-group pull-right">
+                                <a href="@Url.Action("Edit", "Budgets", new { id = budget.Id })"><i class="fa fa-edit"></i></a> |
+                                <a href="@Url.Action("Details", "Budgets", new { id = budget.Id })"><i class="fa fa-th-list"></i></a> |
+                                <a href="@Url.Action("Delete", "Budgets", new { id = budget.Id })"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    <!-- END ACTIVITY TAB CONTENT -->
+    <!-- SETTINGS TAB CONTENT -->
+    <div class="tab-pane settings" id="settings-tab">
+        @using FluentDateTime;
+        @foreach (var budget in Model.Where(b => b.Frequency.Length == "Yearly"))
+        {
+            var firstDoy = DateTime.Now.Date.FirstDayOfYear();
+            var lastDoy = DateTime.Now.NextYear().Date.FirstDayOfYear();
+            var yearlyBudgetTransactionTotal = transactions.Where(t => t.CategoryId == budget.CategoryId && t.Created >= firstDoy && t.Created < lastDoy && t.Status != "VOID").Sum(t => t.Amount);
+            var yearlyBudgetTransactionPercentage = Math.Round((Math.Abs(yearlyBudgetTransactionTotal) / budget.Amount) * 100);
+
+            if (yearlyBudgetTransactionPercentage < 80)
+            {
+                <div class="col-md-6">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fa fa-bar-chart-o"></i>@budget.Frequency.Length @budget.Category.Name Budget</h3>
+                            <div class="widget-header-toolbar">
+                                <h3>@String.Format("{0:C}", Math.Abs(yearlyBudgetTransactionTotal)) / @String.Format("{0:C}", budget.Amount)</h3>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="progress demo-only progress-striped active">
+                                <div class="progress-bar progress-bar-good" data-transitiongoal="@yearlyBudgetTransactionPercentage"></div>
+                            </div>
+                        </div>
+                        <div class="widget-footer" style="font-size: 16px">
+                            <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-original-title="@budget.Description" style="color: #1fa67a; font-size: 18px"></i>
+                            <div class="btn-group pull-right">
+                                <a href="@Url.Action("Edit", "Budgets", new { id = budget.Id })"><i class="fa fa-edit"></i></a> |
+                                <a href="@Url.Action("Details", "Budgets", new { id = budget.Id })"><i class="fa fa-th-list"></i></a> |
+                                <a href="@Url.Action("Delete", "Budgets", new { id = budget.Id })"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            if (yearlyBudgetTransactionPercentage >= 80 && yearlyBudgetTransactionPercentage < 100)
+            {
+                <div class="col-md-6">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fa fa-bar-chart-o"></i>@budget.Frequency.Length @budget.Category.Name Budget</h3>
+                            <div class="widget-header-toolbar">
+                                <h3><i class="fa fa-exclamation" style="color: #b3b300"></i>@String.Format("{0:C}", Math.Abs(yearlyBudgetTransactionTotal)) / @String.Format("{0:C}", budget.Amount)</h3>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="progress demo-only progress-striped active">
+                                <div class="progress-bar progress-bar-caution" data-transitiongoal="@yearlyBudgetTransactionPercentage"></div>
+                            </div>
+                        </div>
+                        <div class="widget-footer" style="font-size: 16px">
+                            <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-original-title="@budget.Description" style="color: #1fa67a; font-size: 18px"></i>
+                            <div class="btn-group pull-right">
+                                <a href="@Url.Action("Edit", "Budgets", new { id = budget.Id })"><i class="fa fa-edit"></i></a> |
+                                <a href="@Url.Action("Details", "Budgets", new { id = budget.Id })"><i class="fa fa-th-list"></i></a> |
+                                <a href="@Url.Action("Delete", "Budgets", new { id = budget.Id })"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            if (yearlyBudgetTransactionPercentage >= 100)
+            {
+                <div class="col-md-6">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fa fa-bar-chart-o"></i>@budget.Frequency.Length @budget.Category.Name Budget</h3>
+                            <div class="widget-header-toolbar">
+                                <h3><i class="fa fa-warning" style="color: #d9534f"></i>@String.Format("{0:C}", Math.Abs(yearlyBudgetTransactionTotal)) / @String.Format("{0:C}", budget.Amount)</h3>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="progress demo-only progress-striped active">
+                                <div class="progress-bar progress-bar-bad" data-transitiongoal="@yearlyBudgetTransactionPercentage"></div>
+                            </div>
+                        </div>
+                        <div class="widget-footer" style="font-size: 16px">
+                            <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" data-original-title="@budget.Description" style="color: #1fa67a; font-size: 18px"></i>
+                            <div class="btn-group pull-right">
+                                <a href="@Url.Action("Edit", "Budgets", new { id = budget.Id })"><i class="fa fa-edit"></i></a> |
+                                <a href="@Url.Action("Details", "Budgets", new { id = budget.Id })"><i class="fa fa-th-list"></i></a> |
+                                <a href="@Url.Action("Delete", "Budgets", new { id = budget.Id })"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    <!-- END SETTINGS TAB CONTENT -->
+</div>
+
+@section scripts {   
+    @Scripts.Render("~/bundles/jqueryval") 
+    <script>
+        $('.progress.demo-only .progress-bar').progressbar({
+            display_text: 'fill'
+        });
+    </script>
+}

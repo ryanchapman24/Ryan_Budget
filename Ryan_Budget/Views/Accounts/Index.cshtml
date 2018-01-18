@@ -1,0 +1,73 @@
+﻿@model IEnumerable<Ryan_Budget.Models.Account>
+@using Microsoft.AspNet.Identity;
+@using Ryan_Budget.Models;
+
+@{
+    ViewBag.Title = "Index";
+    ApplicationDbContext db = new ApplicationDbContext();
+    var user = db.Users.Find(User.Identity.GetUserId());
+}
+
+<h2>@user.Household.Name - Accounts</h2>
+<a href="@Url.Action("Create", "Accounts", new { id = user.HouseholdId })"><div class="label" style="background-color: #1fa67a"><i class="fa fa-plus"></i> Add Account</div></a>
+<hr />
+
+<div class="widget widget-table">
+    <div class="widget-content">
+        <table id="ticket-table" class="table table-sorting table-hover table-bordered datatable">
+            <thead>
+                <tr>
+                    <th>Account</th>
+                    <th>Balance</th>
+                    <th>Updated</th>
+                    <th>Reconciled</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr style="font-size: 10px">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @if (item.Balance >= 0)
+                            {
+                                <p style="color: #1fa67a"><strong>@String.Format("{0:C}", item.Balance)</strong></p>
+                            }
+                            else
+                            {
+                                <p style="color: #d9534f"><strong>@String.Format("{0:C}", item.Balance)</strong></p>
+
+                            }
+                        </td>
+                        <td>
+                            @if (item.Updated.HasValue)
+                            {
+                                @item.Updated.Value.ToString("d")
+                            }
+                        </td>
+                        <td>
+                            @if (item.LastDateReconciled.HasValue)
+                            {
+                                @item.LastDateReconciled.Value.ToString("d")
+                            }
+                        </td>
+                        <td style="font-size: 12px">
+                            <a href="@Url.Action("Edit", "Accounts", new { id = item.Id } )"><i class="fa fa-edit"></i></a> <span>|</span>
+                            <a href="@Url.Action("Details", "Accounts", new { id = item.Id } )"><i class="fa fa-th-list"></i></a> <span>|</span>
+                            <a href="@Url.Action("Reconcile", "Accounts", new { id = item.Id } )"><i class="fa fa-check-square-o"></i></a> <span>|</span>
+                            <a href="@Url.Action("Delete", "Accounts", new { id = item.Id } )"><i class="fa fa-trash"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+</script>
+}

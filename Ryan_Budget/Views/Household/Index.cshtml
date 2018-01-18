@@ -1,0 +1,391 @@
+﻿@model Ryan_Budget.Models.Household
+@using Microsoft.AspNet.Identity;
+@using Ryan_Budget.Models;
+
+@{
+        ViewBag.Title = "Details";
+        ApplicationDbContext db = new ApplicationDbContext();
+        var user = db.Users.Find(User.Identity.GetUserId());
+
+        var transactions = user.Household.Accounts.SelectMany(a => a.Transactions).ToList();
+        var incomeItems = transactions.Where(t => t.Amount >= 0);
+        var expenseItems = transactions.Where(t => t.Amount < 0);
+        var incomeTotal = incomeItems.Where(item => item.Status != "VOID").Sum(item => item.Amount);
+        var expenseTotal = expenseItems.Where(item => item.Status != "VOID").Sum(item => item.Amount);
+        var voidTotal = incomeItems.Where(item => item.Status == "VOID").Sum(item => item.Amount) - expenseItems.Where(item => item.Status == "VOID").Sum(item => item.Amount);
+        var total = Math.Abs(incomeTotal) + Math.Abs(expenseTotal) + Math.Abs(voidTotal);
+
+        var today = DateTime.Now.Day;
+        var todayMonth = DateTime.Now.Month;
+        var todayYear = DateTime.Now.Year;
+        var todayIncomeTrans = Math.Abs(incomeItems.Where(t => t.Created.Day == today && t.Created.Month == todayMonth && t.Created.Year == todayYear && t.Status != "VOID").Sum(t => t.Amount));
+        var todayExpenseTrans = Math.Abs(expenseItems.Where(t => t.Created.Day == today && t.Created.Month == todayMonth && t.Created.Year == todayYear && t.Status != "VOID").Sum(t => t.Amount));
+        var todayDifference = Math.Abs(todayIncomeTrans - todayExpenseTrans);
+
+        var yesterday = DateTime.Now.AddDays(-1).Day;
+        var yesterdayMonth = DateTime.Now.AddDays(-1).Month;
+        var yesterdayYear = DateTime.Now.AddDays(-1).Year;
+        var yesterdayIncomeTrans = Math.Abs(incomeItems.Where(t => t.Created.Day == yesterday && t.Created.Month == yesterdayMonth && t.Created.Year == yesterdayYear && t.Status != "VOID").Sum(t => t.Amount));
+        var yesterdayExpenseTrans = Math.Abs(expenseItems.Where(t => t.Created.Day == yesterday && t.Created.Month == yesterdayMonth && t.Created.Year == yesterdayYear && t.Status != "VOID").Sum(t => t.Amount));
+        var yesterdayDifference = Math.Abs(yesterdayIncomeTrans - yesterdayExpenseTrans);
+
+        var twoDaysAgo = DateTime.Now.AddDays(-2).Day;
+        var twoDaysAgoMonth = DateTime.Now.AddDays(-2).Month;
+        var twoDaysAgoYear = DateTime.Now.AddDays(-2).Year;
+        var twoDaysAgoIncomeTrans = Math.Abs(incomeItems.Where(t => t.Created.Day == twoDaysAgo && t.Created.Month == twoDaysAgoMonth && t.Created.Year == twoDaysAgoYear && t.Status != "VOID").Sum(t => t.Amount));
+        var twoDaysAgoExpenseTrans = Math.Abs(expenseItems.Where(t => t.Created.Day == twoDaysAgo && t.Created.Month == twoDaysAgoMonth && t.Created.Year == twoDaysAgoYear && t.Status != "VOID").Sum(t => t.Amount));
+        var twoDaysAgoDifference = Math.Abs(twoDaysAgoIncomeTrans - twoDaysAgoExpenseTrans);
+
+        var threeDaysAgo = DateTime.Now.AddDays(-3).Day;
+        var threeDaysAgoMonth = DateTime.Now.AddDays(-3).Month;
+        var threeDaysAgoYear = DateTime.Now.AddDays(-3).Year;
+        var threeDaysAgoIncomeTrans = Math.Abs(incomeItems.Where(t => t.Created.Day == threeDaysAgo && t.Created.Month == threeDaysAgoMonth && t.Created.Year == threeDaysAgoYear && t.Status != "VOID").Sum(t => t.Amount));
+        var threeDaysAgoExpenseTrans = Math.Abs(expenseItems.Where(t => t.Created.Day == threeDaysAgo && t.Created.Month == threeDaysAgoMonth && t.Created.Year == threeDaysAgoYear && t.Status != "VOID").Sum(t => t.Amount));
+        var threeDaysAgoDifference = Math.Abs(threeDaysAgoIncomeTrans - threeDaysAgoExpenseTrans);
+
+        var fourDaysAgo = DateTime.Now.AddDays(-4).Day;
+        var fourDaysAgoMonth = DateTime.Now.AddDays(-4).Month;
+        var fourDaysAgoYear = DateTime.Now.AddDays(-4).Year;
+        var fourDaysAgoIncomeTrans = Math.Abs(incomeItems.Where(t => t.Created.Day == fourDaysAgo && t.Created.Month == fourDaysAgoMonth && t.Created.Year == fourDaysAgoYear && t.Status != "VOID").Sum(t => t.Amount));
+        var fourDaysAgoExpenseTrans = Math.Abs(expenseItems.Where(t => t.Created.Day == fourDaysAgo && t.Created.Month == fourDaysAgoMonth && t.Created.Year == fourDaysAgoYear && t.Status != "VOID").Sum(t => t.Amount));
+        var fourDaysAgoDifference = Math.Abs(fourDaysAgoIncomeTrans - fourDaysAgoExpenseTrans);
+
+        var fiveDaysAgo = DateTime.Now.AddDays(-5).Day;
+        var fiveDaysAgoMonth = DateTime.Now.AddDays(-5).Month;
+        var fiveDaysAgoYear = DateTime.Now.AddDays(-5).Year;
+        var fiveDaysAgoIncomeTrans = Math.Abs(incomeItems.Where(t => t.Created.Day == fiveDaysAgo && t.Created.Month == fiveDaysAgoMonth && t.Created.Year == fiveDaysAgoYear && t.Status != "VOID").Sum(t => t.Amount));
+        var fiveDaysAgoExpenseTrans = Math.Abs(expenseItems.Where(t => t.Created.Day == fiveDaysAgo && t.Created.Month == fiveDaysAgoMonth && t.Created.Year == fiveDaysAgoYear && t.Status != "VOID").Sum(t => t.Amount));
+        var fiveDaysAgoDifference = Math.Abs(fiveDaysAgoIncomeTrans - fiveDaysAgoExpenseTrans);
+
+        var sixDaysAgo = DateTime.Now.AddDays(-6).Day;
+        var sixDaysAgoMonth = DateTime.Now.AddDays(-6).Month;
+        var sixDaysAgoYear = DateTime.Now.AddDays(-6).Year;
+        var sixDaysAgoIncomeTrans = Math.Abs(incomeItems.Where(t => t.Created.Day == sixDaysAgo && t.Created.Month == sixDaysAgoMonth && t.Created.Year == sixDaysAgoYear && t.Status != "VOID").Sum(t => t.Amount));
+        var sixDaysAgoExpenseTrans = Math.Abs(expenseItems.Where(t => t.Created.Day == sixDaysAgo && t.Created.Month == sixDaysAgoMonth && t.Created.Year == sixDaysAgoYear && t.Status != "VOID").Sum(t => t.Amount));
+        var sixDaysAgoDifference = Math.Abs(sixDaysAgoIncomeTrans - sixDaysAgoExpenseTrans);
+
+        if ((user.Household.Accounts.Count() > 0) && (total > 0))
+        {
+            var incomePercentage = Math.Round(Math.Abs(incomeTotal) / total * 100);
+            var expensePercentage = Math.Round(Math.Abs(expenseTotal) / total * 100);
+            var voidPercentage = Math.Round(Math.Abs(voidTotal) / total * 100);
+
+        <h2>My Household</h2>
+        <a href="@Url.Action("InviteOthers", new { id = Model.Id })"><div class="label" style="background-color: #1fa67a"><i class="fa fa-plus"></i> Invite</div></a>
+        <a href="@Url.Action("Edit", new { id = Model.Id })"><div class="label" style="background-color: #626262"><i class="fa fa-edit"></i> Edit</div></a>
+        <a href="@Url.Action("Leave", new { id = Model.Id })"><div class="label label-danger"><i class="fa fa-hand-peace-o"></i> Leave</div></a>
+        if (User.IsInRole("Admin"))
+        {
+            <br />
+            <br />
+            <p>@Html.ActionLink("Back to List", "Index", "Admin")</p>
+        }
+        <div>
+            <hr />
+            <div class="widget">
+                <div class="widget-header" style="padding-top: 5px">
+                    <h3 style="font-size: 18px"><i class="fa fa-home" style="padding-right: 5px"></i>@Html.DisplayFor(model => model.Name)</h3>
+                    @if (user.Household.Accounts.Count() > 0)
+                    {
+                        <div class="widget-header-toolbar">
+                            <div class="label" style="background-color: #1fa67a">Income <i class="fa fa-arrow-up"></i> @String.Format("{0:C}", incomeTotal)</div>
+                            <div class="label label-danger">Expenses <i class="fa fa-arrow-down"></i> @String.Format("{0:C}", expenseTotal)</div>
+                        </div>
+                    }
+                </div>
+                <div class="widget-content" style="padding-top: 30px">
+                    @foreach (var member in Model.Users)
+                    {
+                        <a href="@Url.Action("ProfilePage", "Home", new { id = member.Id }, null)">
+                            <img src="@member.ProfilePic" data-toggle="tooltip" data-placement="top" data-original-title="@member.FirstName" style="height: 50px; width: 50px" />
+                        </a>
+                    }
+                    <br />
+                    <br>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!-- WIDGET VERTICAL BAR CHART  -->
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <h3><i class="fa fa-bar-chart-o"></i> DAILY CASH FLOW</h3>
+                                </div>
+                                <div class="widget-content">
+                                    <div class="demo-flot-chart" id="household-vertical-bar-chart" data-ctype="#week"></div>
+                                </div>
+                            </div>
+                            <!-- END WIDGET VERTICAL BAR CHART  -->
+                        </div>
+                        <div class="col-md-6">
+                            <!-- WIDGET DONUT CHART  -->
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <h3><i class="fa fa-bar-chart-o"></i> INCOME : EXPENSE RATIO</h3>
+                                    @if (incomePercentage > expensePercentage)
+                                    {
+                                        <div class="widget-header-toolbar">
+                                            <i class="fa fa-smile-o" style="margin-top: 10px; color: #1fa67a; font-size: 18px" data-toggle="tooltip" data-placement="left" data-original-title="Good Job!"></i>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="widget-content">
+                                    <div class="demo-flot-chart" id="household-donut-chart"></div>
+                                </div>
+                            </div>
+                            <!-- END WIDGET DONUT CHART  -->
+                        </div>
+                    </div>
+                    <!-- WIDGET EMPLOYEE -->
+                    @if (ViewBag.highestUserFlag)
+                    {
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h3><i class="fa fa-thumbs-down"></i> Daily Wall of Shame</h3>
+                                <div class="btn-group widget-header-toolbar">
+                                    @*<a href="#" title="Focus" class="btn-borderless btn-focus"><i class="fa fa-eye"></i></a>
+                                        <a href="#" title="Expand/Collapse" class="btn-borderless btn-toggle-expand"><i class="fa fa-chevron-up"></i></a>
+                                        <a href="#" title="Remove" class="btn-borderless btn-remove"><i class="fa fa-times"></i></a>*@
+                                </div>
+                            </div>                       
+                            <div class="widget-content text-center">
+                                <img src="@ViewBag.highestUserPic" class="img-circle" alt="Avatar" style="max-width: 150px" />
+                                <h4 style="color: #1fa67a"><strong>@ViewBag.highestUserName</strong></h4>
+                                <span style="color: #d9534f">@String.Format("{0:C}", ViewBag.highestUserAmount)</span>
+                                <hr />
+                                <ul class="list-unstyled text-muted">
+                                    <li>Spent the most today, so far</li>
+                                    <li>Least conservative</li>
+                                    <li>Thinks they makes it rain, but they don't</li>
+                                    <li>Has to cook dinner, tonight</li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                    <!-- END WIDGET EMPLOYEE -->
+                </div>
+                <div class="widget-footer">
+                    <span class="badge">@Model.Accounts.Count()</span>
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-link dropdown-toggle" data-toggle="dropdown" style="color: white; text-decoration: none; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif">
+                            Linked Accounts<span class="caret" style="margin-left: 5px"></span>
+                        </a>
+                        @if (Model.Accounts.Count() > 0)
+                        {
+                            <ul class="dropdown-menu" role="menu" style="margin-top: 6px; margin-left: -34.5px; padding-top: 0px;padding-bottom: 0px;">
+                                @foreach (var account in Model.Accounts)
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Details","Accounts", new { id = account.Id })">
+                                            <i class="fa fa-money" style="padding-right: 10px"></i>
+                                            <span class="text">@account.Name</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                    <div class="pull-right" style="">
+                        <span class="badge">@Model.Users.Count()</span>
+                        <div class="btn-group">
+                            <a href="#" class="btn btn-link dropdown-toggle" data-toggle="dropdown" style="color: white; text-decoration: none; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif">
+                                Members<span class="caret" style="margin-left: 5px"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" style="margin-top: 6px; margin-left: -52px; padding-top: 0px;padding-bottom: 0px;">
+                                @foreach (var member in Model.Users)
+                                {
+                                    <li>
+                                        <a href="@Url.Action("ProfilePage", "Home", new { id = member.Id }, null)">
+                                            <i class="fa fa-user" style="padding-right: 10px"></i>
+                                            <span class="text">@member.FirstName</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADD NEW NOTE -->
+            @using (Html.BeginForm("CreateNote", "Household", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="widget widget-quick-note quick-note-create">
+                            <div class="widget-content">
+                                <form class="form-horizontal" role="form">
+                                    <input type="hidden" name="HouseholdId" value="@Model.Id" />
+                                    <input type="text" class="form-control title" name="Title" placeholder="Title" maxlength="23" required>
+                                    <textarea class="form-control" rows="3" cols="30" name="Body" placeholder="Add quick note" maxlength="200" required></textarea>
+                                </form>
+                            </div>
+                            <div class="widget-footer" style="min-height: 50px">
+                                <button type="submit" class="btn btn-custom-primary pull-right"><i class="fa fa-thumb-tack"></i> Pin</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6"></div>
+                </div>
+            }
+            <!-- END ADD NEW NOTE -->
+            <!-- SAVED NOTES -->
+            <div class="row">
+                @foreach (var note in Model.Notes.Reverse())
+                {
+                    <div class="col-md-3">
+                        <div class="widget quick-note-saved">
+                            <div class="widget-header">
+                                <h3>@note.Title</h3>
+                                <div class="widget-header-toolbar">
+                                    <a href="@Url.Action("DeleteNote", "Household", new { id = note.Id })" title="Remove" class="btn-borderless"><i class="fa fa-times"></i></a>
+                                </div>
+                            </div>
+                            <div class="widget-content" overflow="hidden">
+                                <span style="font-size: 11px; color: #1fa67a"><em>@note.AuthorUser.FirstName says...</em></span>
+                                <p>@note.Body</p><br />
+                            </div>
+                            <div class="widget-footer">
+                                <img src="@note.AuthorUser.ProfilePic" style="border-top: none; height: 30px; width: 30px;" />
+                                <span class="pull-right" style="font-size: 10px; color: #1fa67a">@note.Created.ToString("d")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <!-- END SAVED NOTES -->
+        </div>
+
+        @section scripts {
+            @Scripts.Render("~/bundles/jqueryval")
+            <script>
+                function donutLabelFormatter(label, series) {
+                    return "<div class=\"donut-label\">" + label + "<br/>" + Math.round(series.percent) + "%</div>";
+                }
+
+                if ($('#visit-chart, #household-donut-chart').length > 0) {
+                    var data = [
+                        { label: "Income", data: @incomePercentage },
+                        { label: "Expenses", data: @expensePercentage },
+                        { label: "Void", data: @voidPercentage}
+                    ];
+
+                    $.plot('#visit-chart, #household-donut-chart', data, {
+                        series: {
+                            pie: {
+                                show: true,
+                                innerRadius: .4,
+                                stroke: {
+                                    width: 4,
+                                    color: "#253237"
+                                },
+                                label: {
+                                    show: true,
+                                    radius: 3 / 4,
+                                    formatter: donutLabelFormatter
+                                }
+                            },
+                        },
+                        legend: {
+                            show: false
+                        },
+                        grid: {
+                            hoverable: true
+                        },
+                        colors: ["#1fa67a", "#d9534f", "#626262"],
+                    });
+                }
+            </script>
+            <script>
+                function gt(y, m, d) {
+                    return new Date(y, m-1, d).getTime();
+                }
+                if( $('#household-vertical-bar-chart').length > 0 )
+                    chartBarVertical( $('#household-vertical-bar-chart') );
+                function chartBarVertical(placeholder) {
+                    var basic = [
+                        [gt(@sixDaysAgoYear, @sixDaysAgoMonth, @sixDaysAgo), @sixDaysAgoIncomeTrans], [gt(@fiveDaysAgoYear, @fiveDaysAgoMonth, @fiveDaysAgo), @fiveDaysAgoIncomeTrans], [gt(@fourDaysAgoYear, @fourDaysAgoMonth, @fourDaysAgo), @fourDaysAgoIncomeTrans], [gt(@threeDaysAgoYear, @threeDaysAgoMonth, @threeDaysAgo), @threeDaysAgoIncomeTrans], [gt(@twoDaysAgoYear, @twoDaysAgoMonth, @twoDaysAgo), @twoDaysAgoIncomeTrans], [gt(@yesterdayYear, @yesterdayMonth, @yesterday), @yesterdayIncomeTrans], [gt(@todayYear, @todayMonth, @today), @todayIncomeTrans]
+                    ];
+
+                    var gold = [
+                        [gt(@sixDaysAgoYear, @sixDaysAgoMonth, @sixDaysAgo), @sixDaysAgoExpenseTrans], [gt(@fiveDaysAgoYear, @fiveDaysAgoMonth, @fiveDaysAgo), @fiveDaysAgoExpenseTrans], [gt(@fourDaysAgoYear, @fourDaysAgoMonth, @fourDaysAgo), @fourDaysAgoExpenseTrans], [gt(@threeDaysAgoYear, @threeDaysAgoMonth, @threeDaysAgo), @threeDaysAgoExpenseTrans], [gt(@twoDaysAgoYear, @twoDaysAgoMonth, @twoDaysAgo), @twoDaysAgoExpenseTrans], [gt(@yesterdayYear, @yesterdayMonth, @yesterday), @yesterdayExpenseTrans], [gt(@todayYear, @todayMonth, @today), @todayExpenseTrans]
+                    ];
+
+                    var platinum = [
+                        [gt(@sixDaysAgoYear, @sixDaysAgoMonth, @sixDaysAgo), @sixDaysAgoDifference], [gt(@fiveDaysAgoYear, @fiveDaysAgoMonth, @fiveDaysAgo), @fiveDaysAgoDifference], [gt(@fourDaysAgoYear, @fourDaysAgoMonth, @fourDaysAgo), @fourDaysAgoDifference], [gt(@threeDaysAgoYear, @threeDaysAgoMonth, @threeDaysAgo), @threeDaysAgoDifference], [gt(@twoDaysAgoYear, @twoDaysAgoMonth, @twoDaysAgo), @twoDaysAgoDifference], [gt(@yesterdayYear, @yesterdayMonth, @yesterday), @yesterdayDifference], [gt(@todayYear, @todayMonth, @today), @todayDifference]
+                    ];
+
+                    var plot = $.plot(placeholder, 
+                        [
+                            {
+                                data: basic,
+                                label: "Income"
+                            },
+                            {
+                                data: gold,
+                                label: "Expenses"
+                            },
+                            {
+                                data: platinum,
+                                label: "Difference"
+                            }
+                        ], 
+                        {
+                            bars: {
+                                show: true,
+                                barWidth: 15*60*60*300,
+                                fill: true,
+                                order: true,
+                                lineWidth: 0,
+                                fillColor: { colors: [ { opacity: 1 }, { opacity: 1 } ] }
+                            },
+                            grid: {
+                                hoverable: true, 
+                                clickable: true,
+                                borderWidth: 0,
+                                tickColor: "#4B5E65",
+					
+                            },
+                            colors: ["#1fa67a", "#d9534f", "#626262"],
+                            yaxis: {
+                                font: { color: "#fff" },
+                            },
+                            xaxis: {
+                                mode: "time",
+                                timezone: "browser",
+                                minTickSize: [1, "day"],
+                                timeformat: "%a",
+                                font: { color: "#fff" },
+                                tickColor: "transparent",
+                                autoscaleMargin: 0.2
+                            },
+                            tooltip: true,
+                            tooltipOpts: {
+                                content: '%s: %y'
+                            },
+                            legend: {
+                                labelBoxBorderColor: "transparent",
+                                backgroundColor: "#fff"
+                            },
+                        }
+                    );
+                }
+            </script>
+        }
+    }
+
+    else if (user.Household.Accounts.Count() == 0)
+    {
+        <h1>Before you can view dynamic data pertaining to your household, you must link at least one bank account <a href="@Url.Action("Create","Accounts", new { id = user.HouseholdId })">here</a>.</h1>
+    }
+
+    else if ((user.Household.Accounts.Count() > 0) && (total == 0))
+    {
+        <h1>Almost there!<br /><br /> Next step: add at least <span style="color: #1fa67a">one</span> transaction via the "New Transaction" button in the nav-bar.</h1>
+        
+        @section scripts {
+        <script>
+            $('.ryanmagic').addClass('animated pulse infinite');
+        </script>
+        }
+    }
+}

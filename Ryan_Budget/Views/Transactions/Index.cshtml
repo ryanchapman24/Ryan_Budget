@@ -1,0 +1,116 @@
+﻿@model IEnumerable<Ryan_Budget.Models.Transaction>
+@using Microsoft.AspNet.Identity;
+@using Ryan_Budget.Models;
+
+@{
+    ViewBag.Title = "Index";
+    ApplicationDbContext db = new ApplicationDbContext();
+    var user = db.Users.Find(User.Identity.GetUserId());
+    Layout = null;
+}
+
+<h2>Transaction Index</h2>
+<hr />
+
+<div class="widget widget-table">
+    @*<div class="widget-header" style="padding-top: 5px">
+        <h3 style="font-size: 18px"><i class="fa fa-home" style="padding-right: 5px"></i> Households</h3>
+        <div class="btn-group widget-header-toolbar">
+        </div>
+    </div>*@
+    <div class="widget-content">
+        <table id="datatable-data-export-ryan" class="table table-hover table-bordered datatable">
+            <thead>
+                <tr>
+                    <th>Posted Date</th>
+                    <th>Transaction Date</th>
+                    <th>Account</th>
+                    <th>User</th>
+                    <th>Category</th>
+                    <th>Credits</th>
+                    <th>Debits</th>
+                    <th>Reconciled</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr style="font-size: 10px">
+                        <td>
+                            @item.Created.ToString("d")
+                        </td>
+                        <td>
+                            @item.TransactionDate.ToString("d")
+                        </td>
+                        <td>
+                            @item.Account.Name
+                        </td>
+                        <td>
+                            @item.AuthorUser.FirstName
+                        </td>
+                        <td>
+                            @item.Category.Name
+                            @if (item.Description != null)
+                            {
+                            <i class="fa fa-question-circle" style="color:#1fa67a; margin-left: 3px; font-size: 12px" data-toggle="tooltip" data-placement="right" data-original-title="@item.Description"></i>
+                            }
+                        </td>
+                        <td>
+                            @if ((item.Amount >= 0) && (item.Status != "VOID"))
+                            {
+                                <strong style="color: #1fa67a">@String.Format("{0:C}", item.Amount)</strong> if (item.Documentation != null){<a href="@Url.Content(item.Documentation)" target="_blank"><i class="fa fa-file-text"></i></a>}
+                            }
+                            else if ((item.Amount >= 0) && (item.Status == "VOID"))
+                            {
+                                <em style="color: grey; text-decoration: line-through">@String.Format("{0:C}", item.Amount)</em> if (item.Documentation != null){<a href="@Url.Content(item.Documentation)" target="_blank"><i class="fa fa-file-text"></i></a>}
+                            }
+                        </td>
+                        <td>
+                            @if ((item.Amount < 0) && (item.Status != "VOID"))
+                            {
+                                <strong style="color: #d9534f">@String.Format("{0:C}", item.Amount)</strong> if (item.Documentation != null){<a href="@Url.Content(item.Documentation)" target="_blank"><i class="fa fa-file-text"></i></a>}
+                            }
+                            else if ((item.Amount < 0) && (item.Status == "VOID"))
+                            {
+                                <em style="color: grey; text-decoration: line-through">@String.Format("{0:C}", item.Amount)</em> if (item.Documentation != null){<a href="@Url.Content(item.Documentation)" target="_blank"><i class="fa fa-file-text"></i></a>}
+                            }
+                        </td>
+                        <td>
+                            @if(item.Reconciled == true)
+                            {
+                            <i class="fa fa-check-square-o" style="color: #1fa67a"></i>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Status == "VOID")
+                            {
+                                <strong>@item.Status</strong> <a href="@Url.Action("Unvoid", "Transactions", new { id = item.Id } )"><i class="fa fa-undo"></i></a>
+                            }
+                            else if (item.Status == "RECONCILIATION")
+                            {
+                                <strong>@item.Status</strong>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Edit", "Transactions", new { id = item.Id } )"><i class="fa fa-edit" style="font-size: 12px"></i></a> <span style="font-size: 12px">|</span>
+                                <a href="@Url.Action("Void", "Transactions", new { id = item.Id } )"><i class="fa fa-ban" style="font-size: 12px"></i></a> <span style="font-size: 12px">|</span>
+                                <a href="@Url.Action("Delete", "Transactions", new { id = item.Id } )"><i class="fa fa-trash" style="font-size: 12px"></i></a>                           
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@*@section scripts {*@
+    <script>
+        $(document).ready(function () {
+            $('#datatable-data-export-ryan').dataTable({
+                "bSort": false,                
+            });
+        });
+    </script>
+@*}*@

@@ -1,0 +1,135 @@
+﻿@model Ryan_Budget.Models.Transaction
+@using Microsoft.AspNet.Identity;
+@using Ryan_Budget.Models;
+
+@{
+    ViewBag.Title = "Create";
+    ApplicationDbContext db = new ApplicationDbContext();
+    var user = db.Users.Find(User.Identity.GetUserId());
+    Layout = null;
+}
+
+@using (Html.BeginForm("Create", "Transactions", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="widget" style="background: none">
+        <div class="widget-content">
+            <form class="form-horizontal" role="form">
+                <fieldset class="transactions">
+                    <div class="form-group">
+                        <label for="ticket-email" class="col-sm-3 control-label">Transaction Date</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="text" id="datepicker" name="TransactionDate" class="form-control" required>
+                            </div>
+                        </div>
+                    </div><br /><br /><br />
+                    <div class="form-group">
+                        <label for="ticket-type" class="col-sm-3 control-label">Account</label>
+                        <div class="col-sm-9">
+                            <select id="ticket-type" name="AccountId" class="select-ticket-type" required>
+                                @if (user.Household.Accounts != null)
+                                {
+                                    @*if (user.Household.Accounts.Count() > 1)
+                                    {
+                                    <option disabled selected>- - - - - - - - - - - - - </option>
+                                    }*@
+                                    foreach (var account in user.Household.Accounts)
+                                    {
+                                        <option value="@account.Id">@account.Name</option>
+                                    }
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(model => model.AccountId, "", new { @class = "text-danger" })
+                        </div>
+                    </div><br /><br />
+                    <div class="form-group">
+                        <label for="ticket-priority" class="col-sm-3 control-label">Category</label>
+                        <div class="col-sm-9">
+                            <select id="multiselect6" name="CategoryId" class="select-ticket-priority" required>
+                                <optgroup label="Expense">          
+                                    @foreach (var category in ViewBag.Expenses)
+                                    {
+                                        <option value="@category.Id">@category.Name</option>
+                                    }
+                                </optgroup>
+                                <optgroup label="Income">
+                                    @foreach (var category in ViewBag.Incomes)
+                                    {
+                                        <option value="@category.Id">@category.Name</option>
+                                    }
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div><br /><br />
+                    <div class="form-group">
+                        <label for="ticket-subject" class="col-sm-3 control-label">Type</label>
+                        <div class="col-sm-9">
+                            <label class="control-inline fancy-checkbox">
+                                <input id="credit" type="checkbox" name="Type" value="true">
+                                <span>Credit</span>
+                            </label>
+                            <label class="control-inline fancy-checkbox">
+                                <input id="debit" type="checkbox" name="Type" value="false" checked>
+                                <span>Debit</span>
+                            </label>
+                        </div>
+                    </div><br /><br />
+                    <div class="form-group">
+                        <label for="ticket-name" class="col-sm-3 control-label">Amount</label>
+                        <div class="col-sm-9">
+                            @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control dannymagic", placeholder = "Amount", min = "0" } })
+                            @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
+                        </div>
+                    </div><br />
+                </fieldset>
+                <fieldset class="transactions">
+                    <legend style="font-size: 16px">Optional Info</legend>
+                    <div class="form-group">
+                        <label for="ticket-message" class="col-sm-3 control-label">Description</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control" name="Description" id="ticket-message" rows="5" cols="30" placeholder="Message"></textarea>
+                        </div>
+                    </div><br /><br />
+                    <div class="form-group" style="margin-top: 85px">
+                        <label for="ticket-attachment" class="col-sm-3 control-label">Receipt</label>
+                        <div class="col-md-9">
+                            <input name="image" type="file" id="fileUpload" />
+                            @Html.ValidationMessageFor(model => model.Documentation, "", new { @class = "text-danger" })
+                            <p class="help-block" style="font-size: 10px"><em>Valid file type: .jpg, .png, .gif. File size max: 1 MB</em></p>
+                        </div>
+                    </div><br /><br />
+                    <div class="modal-footer" style="padding-bottom: 0px; margin-bottom: -20px">
+                        <audio id="mysoundclip" preload="auto">
+                            <source src="~/assets/audio/cash.wav" />
+                        </audio>
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times-circle"></i> Close</button>
+                        <button type="submit" class="play btn btn-custom-primary"><i class="fa fa-check-circle"></i>Commit Transaction</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+}
+
+@*@section Scripts {*@
+<script src="~/assets/js/jquery/jquery-2.1.0.min.js"></script>
+    @Scripts.Render("~/bundles/jqueryval")
+<script>
+    $(document).on("keypress", ".dannymagic", function () {
+        if (event.which == 45 || event.which == 109 || event.which == 189) {
+            event.preventDefault();
+        }
+    });
+</script>
+<script>
+    var audio = $("#mysoundclip")[0];
+    console.log(audio);
+    var vid = document.getElementById("mysoundclip");
+    vid.volume = 0.2;
+    $("button.play").click(function() {
+        audio.play();
+    });
+</script>
+@*}*@

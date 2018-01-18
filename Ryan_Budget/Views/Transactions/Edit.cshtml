@@ -1,0 +1,179 @@
+﻿@model Ryan_Budget.Models.Transaction
+
+@{
+    ViewBag.Title = "Edit";
+
+}
+
+<h2>Edit Transaction</h2>
+
+
+@using (Html.BeginForm("Edit", "Transactions", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="act" value="@ViewBag.Account" />
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.Documentation)
+
+        <div class="form-group">
+            <div class="control-label col-md-2">
+                Transaction Date
+            </div>
+            <div class="col-md-10">
+                <div class="input-group" style="color: #fff">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    <input type="text" name="TransactionDate" class="datepickerTwo form-control" value="@Model.TransactionDate.ToString("mM/dd/yyyy")">
+                    @Html.ValidationMessageFor(model => model.TransactionDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label col-md-2">
+                Account
+            </div>
+            <div class="col-md-10">
+                @Html.DropDownList("AccountId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.AccountId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label col-md-2">
+                Category
+            </div>
+            <div class="col-md-10">
+                @Html.DropDownList("CategoryId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @if (Model.Type == false)
+                {
+                    <label class="control-inline fancy-checkbox">
+                        <input class="credit" type="checkbox" name="Type" value="true">
+                        <span>Credit</span>
+                    </label>
+                    <label class="control-inline fancy-checkbox">
+                        <input class="debit" type="checkbox" checked name="Type" value="false">
+                        <span>Debit</span>
+                    </label>
+                }
+                @if (Model.Type == true)
+                {
+                    <label class="control-inline fancy-checkbox">
+                        <input class="credit" type="checkbox" checked name="Type" value="true">
+                        <span>Credit</span>
+                    </label>
+                    <label class="control-inline fancy-checkbox">
+                        <input class="debit" type="checkbox"  name="Type" value="false">
+                        <span>Debit</span>
+                    </label>
+                }
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input class="form-control dannymagic" name="Amount" min="0" value="@Math.Abs(Model.Amount)"/>
+                @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>    
+        <div class="form-group">
+            <div class="control-label col-md-2">
+                Receipt
+            </div>
+            <div class="col-md-10">
+                <input name="image" type="file" class="form-control" id="fileUploadTwo" />
+                <div id="fileDisplay" style="max-width: 400px; padding-top: 10px">
+                    @Html.ValidationMessageFor(model => model.Documentation, "", new { @class = "text-danger" })
+                    @if (Model.Documentation != null)
+                    {
+                        <a href="@Url.Content(Model.Documentation)"><img src="@Url.Content(Model.Documentation)" style="width: 90%; padding-top: 15px" /></a>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to Transactions", "Index", "Home")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+            var fileInput = document.getElementById('fileUploadTwo');
+            var fileDisplayArea = document.getElementById('fileDisplay');
+
+            //File Reader Function for displaying images
+            fileInput.addEventListener('change', function (e) {
+                var file = fileInput.files[0];
+                var imageType = /image.*/;
+
+                if (file.type.match(imageType)) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        fileDisplayArea.innerHTML = "";
+
+                        // Create a new image.
+                        var img = new Image();
+                        // Set the img src property using the data URL.
+                        img.src = reader.result;
+                        // Add the image to the page.
+                        fileDisplayArea.appendChild(img);
+                    }
+
+                    reader.readAsDataURL(file);
+                }
+
+                else {
+                    fileDisplayArea.innerHTML = "File not supported!";
+                }
+            });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('.datepickerTwo').datepicker().on('changeDate', function (ev) {
+                $(this).datepicker('hide');
+            });
+            $(".credit").click(function () {
+                $('.debit').removeAttr("checked");
+            });
+            $(".debit").click(function () {
+                $('.credit').removeAttr("checked");
+            });
+        });
+    </script>
+    <script>
+        $(document).on("keypress", ".dannymagic", function () {
+            if (event.which == 45 || event.which == 109 || event.which == 189) {
+                event.preventDefault();
+            }
+        });
+    </script>
+}

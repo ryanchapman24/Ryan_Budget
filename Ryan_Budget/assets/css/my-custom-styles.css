@@ -1,0 +1,62 @@
+/*	
+*	################################################################################
+*	
+*	My Custom Style for KINGADMIN
+*	---------------------------------------------------------------------
+*
+*	Version		1.0
+*	Author		Your Name
+*	
+*	Override theme style or create your new styles. Direct change to main.css
+*	is not recommended to avoid problems when theme updates arrived in the future
+*	
+*	################################################################################
+*/
+
+.background {
+    background: url(/assets/img/The_financial_crisis_Wallpaper_Money_Tree_015905_.jpg) no-repeat center center fixed;
+    background-size: cover;
+}
+
+.guest-login-btn {
+    background-color: white;
+}
+
+.guest-login-btn:hover {
+    background-color: #eaeaea;
+}
+
+.third-party-g:hover {
+    background-color: white;
+    border-color: grey;
+    color: #1fa67a;
+}
+
+.third-party-fb:hover {
+    background-color: white;
+    border-color: grey;
+    color: #1fa67a;
+}
+
+.third-party-t:hover {
+    background-color: white;
+    border-color: grey;
+    color: #1fa67a;
+}
+
+.third-party-m:hover {
+    background-color: white;
+    border-color: grey;
+    color: #1fa67a;
+}
+
+.third-party-li:hover {
+    background-color: white;
+    border-color: grey;
+    color: #1fa67a;
+}
+
+.transactions .form-group {
+    margin-bottom: 0px;
+    padding-bottom: 15px
+}

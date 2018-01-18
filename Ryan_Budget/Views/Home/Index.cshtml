@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNet.Identity;
+@using Ryan_Budget.Models;
+
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_HomeLayout.cshtml";
+    ApplicationDbContext db = new ApplicationDbContext();
+    var user = db.Users.Find(User.Identity.GetUserId());
+}
+
+@if ((user.HouseholdId != null) && (user.Household.Accounts.Count() > 0))
+{
+    <div class="jumbotron" style="width: 98%; background: url('../../assets/img/black-linen.png?1451114327'); background-color: #455E66; padding-left: 20px; padding-right: 20px; padding-top: 1px; padding-bottom: 1px;">
+        @Html.Action("Index", "Transactions")
+    </div>
+}
+
+else
+{
+    <div class="jumbotron" style="width: 98%; background: url('../../assets/img/black-linen.png?1451114327'); text-align: center; background-color: #455E66; padding-left: 20px; padding-right: 20px; padding-bottom: 10px; padding-top: 10px">
+        <h1>Welcome to</h1>
+        <div class="row">
+            <h1 class="col-md-2" style="font-size: 100px">p</h1>
+            <h1 class="col-md-2" style="font-size: 100px">o</h1>
+            <h1 class="col-md-2" style="font-size: 100px">c</h1>
+            <h1 class="col-md-2" style="font-size: 100px">k</h1>
+            <h1 class="col-md-2" style="font-size: 100px">e</h1>
+            <h1 class="col-md-2" style="font-size: 100px">t</h1>
+        </div>
+        <h2>Your household budgetor.  We're here to help you set your financial goals and achieve them.</h2>
+        <div class="row" style="margin-top: 40px">
+            <h1 class="widget col-md-4 col-md-offset-1" style="font-size: 16px; padding: 8px"><em>The habit of saving is itself an education; it fosters every virtue, teaches self-denial, cultivates the sense of order, trains to forethought, and so broadens the mind.<br /><br /><span style="color: #1fa67a">T.T. Munger</span></em></h1>
+            <h1 class="widget col-md-4 col-md-offset-2" style="font-size: 16px; padding: 8px"><em>Financial peace isn’t the acquisition of stuff. It’s learning to live on less than you make, so you can give money back and have money to invest. You can’t win until you do this.<br /><br /><span style="color: #1fa67a">Dave Ramsey</span></em></h1>
+        </div>
+    </div>
+}

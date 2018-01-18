@@ -1,0 +1,102 @@
+﻿@model Ryan_Budget.Models.ApplicationUser
+@using Microsoft.AspNet.Identity;
+
+@{
+    ViewBag.Title = "ProfilePage";
+}
+
+<div class="content">
+    <div class="main-content">
+        <!-- NAV TABS -->
+        <ul class="nav nav-tabs nav-tabs-custom-colored tabs-iconized">
+            <li class="active"><a href="#profile-tab" data-toggle="tab"><i class="fa fa-user"></i> Profile</a></li>
+            <li><a href="#activity-tab" data-toggle="tab"><i class="fa fa-rss"></i> Recent Activity</a></li>
+        </ul>
+        <!-- END NAV TABS -->
+        <div class="tab-content profile-page">
+            <!-- PROFILE TAB CONTENT -->
+            <div class="tab-pane profile active" id="profile-tab">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="user-info-left">
+                            <img src="@Model.ProfilePic" alt="Profile Picture" style="max-width: 180px; background-color: white" />
+                            <h2>@Model.DisplayName <i class="fa fa-circle online-icon" style="color: #1fa67a"></i><sup class="sr-only">online</sup></h2>
+                            @if (Model.Id == User.Identity.GetUserId())
+                            {
+                                @Html.ActionLink("[Update your account information]", "UpdateInformation", "Manage")
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="user-info-right">
+                            <div class="basic-info">
+                                <h3><i class="fa fa-square"></i> Basic Information</h3>
+                                <p class="data-row">
+                                    <span class="data-name">First Name</span>
+                                    <span class="data-value">@Model.FirstName</span>
+                                </p>
+                                <p class="data-row">
+                                    <span class="data-name">Last Name</span>
+                                    <span class="data-value">@Model.LastName</span>
+                                </p>
+                                @if (Model.Household != null)
+                                {
+                                <p class="data-row">
+                                    <span class="data-name">Household</span>
+                                    <span class="data-value">@Model.Household.Name</span>
+                                </p>
+                                }
+                            </div>
+                            <div class="contact_info">
+                                <h3><i class="fa fa-square"></i> Contact Information</h3>
+                                <p class="data-row">
+                                    <span class="data-name">Email</span>
+                                    <span class="data-value">@Model.Email</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END PROFILE TAB CONTENT -->
+            <!-- ACTIVITY TAB CONTENT -->
+            <div class="tab-pane activity" id="activity-tab">
+                <p style="margin-top: -25px; padding-bottom: 15px"><small><em>Displays up to 30 items</em></small></p>
+                <ul class="list-unstyled activity-list">
+                    @if (ViewBag.Activities.Count > 0)
+                    {
+                        int processed = 0;
+                        foreach (var activity in ViewBag.Activities)
+                        {
+                            if (activity.Amount >= 0)
+                            {
+                                <li>
+                                    <i class="fa fa-plus-square activity-icon pull-left" style="color: #1fa67a"></i>
+                                    <p>
+                                        <span style="color: #1fa67a">@activity.AuthorUser.FirstName</span> credited <a href="@Url.Action("Details", "Accounts", new { id = activity.AccountId })">@activity.Account.Name</a> for <span style="color: #1fa67a"><strong>@String.Format("{0:C}", activity.Amount)</strong></span><span class="timestamp">@activity.Created.ToString("g")</span>
+                                    </p>
+                                </li>
+                                processed++;
+                            }
+                            if (activity.Amount < 0)
+                            {
+                                <li>
+                                    <i class="fa fa-minus-square activity-icon pull-left" style="color:#d9534f"></i>
+                                    <p>
+                                        <span style="color: #1fa67a">@activity.AuthorUser.FirstName</span> debited <a href="@Url.Action("Details", "Accounts", new { id = activity.AccountId })">@activity.Account.Name</a> for <span style="color: #d9534f"><strong>@String.Format("{0:C}", activity.Amount)</strong></span><span class="timestamp">@activity.Created.ToString("g")</span>
+                                    </p>
+                                </li>
+                            processed++;
+                            }
+
+                            if (processed == 30) { break; };
+                        }
+                    }
+                </ul>
+            </div>            
+        </div>
+    </div>
+    <!-- /main-content -->
+</div>
+
+

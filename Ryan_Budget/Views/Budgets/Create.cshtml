@@ -1,0 +1,100 @@
+﻿@model Ryan_Budget.Models.Budget
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Add Budget</h2>
+
+
+@using (Html.BeginForm("Create", "Budgets", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" value="@ViewBag.HouseholdId" name="HouseholdId" />
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2", style = "margin-top: -6px" })
+            <div class="col-md-10">
+                <label class="control-inline fancy-checkbox">
+                    <input id="income" type="checkbox" name="Type" value="true">
+                    <span>Income</span>
+                </label>
+                <label class="control-inline fancy-checkbox">
+                    <input id="expense" type="checkbox" name="Type" value="false" checked>
+                    <span>Expense</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label col-md-2">
+                Category
+            </div>            
+            <div class="col-md-10">
+                @Html.DropDownList("CategoryId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label col-md-2">
+                Frequency
+            </div>
+            <div class="col-md-10">
+                @Html.DropDownList("FrequencyId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.FrequencyId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control dannymagic", min = "0" } })
+                @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <textarea class="form-control" name="Description" rows="5" placeholder="Message" required></textarea>
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to Budgets", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+            $(document).ready(function () {               
+                $("#income").click(function () {
+                    $('#expense').removeAttr("checked");
+                });
+                $("#expense").click(function () {
+                    $('#income').removeAttr("checked");
+                });
+            });
+    </script>
+    <script>
+        $(document).on("keypress", ".dannymagic", function () {
+            if (event.which == 45 || event.which == 109 || event.which == 189) {
+                event.preventDefault();
+            }
+        });
+    </script>
+}

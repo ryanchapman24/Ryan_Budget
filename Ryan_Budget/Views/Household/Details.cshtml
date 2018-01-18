@@ -1,0 +1,58 @@
+﻿@model Ryan_Budget.Models.Household
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Household Details</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Created)
+        </dt>
+
+        <dd>
+            @Model.Created.ToString("d")
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Updated)
+        </dt>
+
+        <dd>
+            @if (Model.Updated.HasValue)
+            {
+                @Model.Updated.Value.ToString("d")
+            }
+        </dd>
+        <dt>
+            Users
+        </dt>
+        <dd>
+            @foreach (var user in Model.Users)
+            {
+                @user.DisplayName<br />
+            }
+        </dd>
+        <dt>
+            Accounts
+        </dt>
+        <dd>
+            @Model.Accounts.Count()
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Back to Households", "Index", "Admin")<span> |</span>  
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) 
+</p>

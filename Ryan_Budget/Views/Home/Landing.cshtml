@@ -1,0 +1,24 @@
+﻿@using Ryan_Budget.Models
+@{
+    ViewBag.Title = "Log in";
+    Layout = "~/Views/Shared/_LandingLayout.cshtml";
+}
+
+<div class="wrapper full-page-wrapper page-auth page-login text-center">
+    <div class="landing-jumbotron animated fadeIn" style="min-height: 290px; margin-top: 100px; background-color: rgba(0,0,0,0.25)">
+        <div class="row" style="margin-right: 0px">
+            <img class="col-md-3 col-md-offset-1" style="background-color: white; border: 5px solid white; border-radius: 100%; padding: 0px; margin-top: 55px; margin-bottom: 55px; width: 250px" src="~/assets/img/Money_Icon.png" alt="" />
+            <div class="col-md-8" style="margin-right: 0px; margin-top:-15px; text-align: center">
+                <div class="row hidden-xs" style="text-align: center"><span class="text-nowrap" style="font-family:'Yu Gothic'; line-height: 1.5; font-size: 155px; color: white; text-shadow: 4px 4px 4px #626262;">p o c k e t</span></div>
+                <div class="row" style="margin-top: 30px;">
+                    <button class="btn btn-custom-primary btn-lg btn-block btn-auth" onclick="location.href='@Url.Action("Index", "Home")'" style="display: inline; width: 300px; height: 70px; margin-bottom: 20px; margin-left: 20px; margin-right: 10px"><i class="fa fa-arrow-circle-o-right"></i> Login</button>
+                    <button class="btn btn-custom-primary btn-lg btn-block btn-auth" onclick="location.href='@Url.Action("Register", "Account")'" style="display: inline; width: 300px; height: 70px; margin-bottom: 20px; margin-top: 0px; margin-left: 20px; margin-right: 10px"><i class="fa fa-arrow-circle-o-right"></i> Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

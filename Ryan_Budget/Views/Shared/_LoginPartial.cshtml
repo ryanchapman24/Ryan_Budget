@@ -1,0 +1,44 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+    @Html.AntiForgeryToken()
+
+    <div class="logged-user" style="text-align: right; padding-top: 5px; min-width: 112px">
+        <div class="btn-group">
+            <a href="#" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
+                @ViewBag.DisplayName<span class="caret" style="margin-left: 5px"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu" style="margin-top: 0px">
+                <li>
+                    <a href="@Url.Action("ProfilePage", "Home", new { id = User.Identity.GetUserId() })">
+                        <i class="fa fa-user"></i>
+                        <span class="text">Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index", "Manage")">
+                        <i class="fa fa-cog"></i>
+                        <span class="text">Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:document.getElementById('logoutForm').submit()">
+                        <i class="fa fa-power-off"></i>
+                        <span class="text">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    }
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", style = "font-size: 10px; color: white; padding-top: 5px; padding-bottom: 5px" })</li>
+        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", style = "font-size: 10px; color: white; padding-top: 5px; padding-bottom: 5px" })</li>
+    </ul>
+}
